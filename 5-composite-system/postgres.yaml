@@ -4,18 +4,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: database
   labels:
-    app: postgres
+    app: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: database
   template:
     metadata:
       labels:
-        app: postgres
+        app: database
     spec:
       containers:
         - name: postgres
@@ -65,7 +65,7 @@ metadata:
   name: # ___
 spec:
   selector:
-    app: postgres
+    app: database
   ports:
     - port: 5432
       targetPort: 5432
