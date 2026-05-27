@@ -113,6 +113,15 @@ curl http://demo.localhost
 
 ---
 
+## Stuck?
+
+- Field help: `kubectl explain service.spec` and `kubectl explain ingress.spec.rules`.
+- Service returns nothing / has no endpoints? Its `selector` doesn't match your Pod
+  labels: compare `kubectl describe service/demo` with `kubectl get pods --show-labels`.
+- Ingress 404s? `kubectl describe ingress/demo` — check the host and `ingressClassName`,
+  and that Traefik is running (`kubectl get pods -n kube-system | grep traefik`).
+- Docs: <https://kubernetes.io/docs/concepts/services-networking/>
+
 ## BONUS
 
 1. Scale `demo` to 3 replicas and `curl http://demo.localhost` repeatedly while

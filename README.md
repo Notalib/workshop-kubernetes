@@ -15,6 +15,8 @@ Workshop #1 was about building and running *one* container. This one is about
 - `<num>-<name>/` — exercise modules for **you** to work through, in order. Each has a
   `README.md` with `TASK` blocks and starter manifests with `TODO`s to fill in.
 - `edu-<name>/` — finished examples to read and run, not exercises.
+- [helm-teaser/](./helm-teaser/README.md) — facilitator demo teasing the Helm workshop.
+- [live-demo/](./live-demo/README.md) — facilitator cheat-sheet for demoing the real cluster.
 - [deck-notes/](./deck-notes/README.md) — supporting notes for the presentation.
 
 ## Prerequisites
@@ -56,6 +58,11 @@ deletion. StorageClass → PVC → PV explained.
 ### [4 — Exposing Workloads](./4-exposing-workloads/README.md)
 Put a Service in front of your Pods, then an Ingress so it's reachable from your
 browser at `*.localhost`.
+
+### [5 — Composite system (capstone)](./5-composite-system/README.md)
+Wire the Spring Boot + Postgres app from Workshop #1 together yourself: two cooperating
+Deployments, a Service for discovery, a ConfigMap + Secret, a PVC, and an Ingress —
+everything from modules 1–4 in one real system.
 
 ### [edu — Multi-component system](./edu-multi-component/README.md)
 A finished two-tier app (nginx → http-echo) wired by Services and an Ingress —
@@ -107,6 +114,21 @@ kubectl config set-context --current --namespace=<ns>   # set your default
 # Tip: shell completion
 source <(kubectl completion bash)        # or zsh
 ```
+
+## How to get unstuck
+
+Before reaching for the solutions branch, these five tools resolve most problems:
+
+- **`kubectl explain <type>.<field>`** — built-in schema docs, works offline. Drill in:
+  `kubectl explain deployment.spec.template.spec.containers`. Every field is documented.
+- **`kubectl create <thing> ... --dry-run=client -o yaml`** — scaffold a valid manifest
+  to start from, then edit it. e.g. `kubectl create deployment x --image=nginx --dry-run=client -o yaml`.
+- **`kubectl describe <type>/<name>`** — the **Events** at the bottom usually say exactly
+  what's wrong (bad image, unbound PVC, failed mount, no endpoints).
+- **`kubectl logs <pod>`** (add `--previous` for a crashed container) — the app's own errors.
+- **`kubectl get <type>/<name> -o yaml`** — the full object including its live `status`.
+
+Plus the [docs](https://kubernetes.io/docs), and an LLM makes a strong Kubernetes tutor.
 
 ## Best practices
 

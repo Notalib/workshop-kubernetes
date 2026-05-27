@@ -145,6 +145,15 @@ Re-run `kubectl apply -f deployment.yaml` after editing the replica count — no
 
 ---
 
+## Stuck?
+
+- Scaffold one to compare against:
+  `kubectl create deployment demo --image=nginx --dry-run=client -o yaml`
+- Field help: `kubectl explain deployment.spec` and
+  `kubectl explain deployment.spec.template.spec.containers`.
+- Something not starting? `kubectl describe deployment/demo` — read the **Events**.
+- Docs: <https://kubernetes.io/docs/concepts/workloads/controllers/deployment/>
+
 ## BONUS
 
 1. `kubectl get pod <name> -o yaml` — read the full Pod object Kubernetes filled in.

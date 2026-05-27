@@ -130,7 +130,45 @@ same objects visually.
 
 ---
 
-# 7. Declarative — the part that scales to real systems
+# 7. Under the hood: kubectl is just an API client
+
+Everything so far went through the Kubernetes **API server** on port 6443. `kubectl`
+isn't magic — it's a friendly HTTP client for that REST API. Prove it three ways.
+
+**See the actual HTTP calls** a command makes with `-v=6` (URLs) — bump to `-v=8` for
+full request/response bodies:
+
+```bash
+kubectl get pods -v=6
+# ... "Response" verb="GET" url="https://127.0.0.1:6443/api/v1/namespaces/workshop/pods" status="200 OK"
+```
+
+**Hit the API directly** — the raw JSON kubectl received, with no table formatting:
+
+```bash
+kubectl get --raw /api/v1/namespaces/workshop/pods | head -c 400; echo
+```
+
+**Talk to the API with plain `curl`** via a local proxy that handles auth/TLS for you:
+
+```bash
+kubectl proxy --port=8001 &
+curl -s http://localhost:8001/api/v1/namespaces/workshop/pods | head -c 400; echo
+curl -s http://localhost:8001/apis/apps/v1/namespaces/workshop/deployments | head -c 400; echo
+kill %1   # stop the proxy
+```
+
+## Observations
+
+- `kubectl create/scale/expose` are just `POST`/`PATCH`/`GET` against a REST API.
+- The cluster *is* its API — Rancher, CI pipelines, Terraform and your scripts all
+  drive the **same** endpoints. kubectl has no special powers.
+- That's why manifests work: `kubectl apply` just `PUT`s an object into the API. Which
+  leads straight into…
+
+---
+
+# 8. Declarative — the part that scales to real systems
 
 Everything above was imperative (`kubectl create/scale/expose`). Under the hood each
 command just created or edited an **API object**. We can write those objects as YAML
@@ -146,7 +184,7 @@ review it, re-apply it. The exercises build up to writing these manifests yourse
 
 ---
 
-# 8. Cleanup
+# 9. Cleanup
 
 ```bash
 kubectl delete deployment/web service/web

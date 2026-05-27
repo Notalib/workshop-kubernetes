@@ -1,0 +1,71 @@
+# The database tier (TASK 2): a Postgres Deployment, a Service the backend finds it by,
+# and a PVC so data persists. Fill in the TODOs.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18.3-alpine3.23
+          ports:
+            - containerPort: 5432
+          env:
+            # Database name — read from the ConfigMap (worked example to copy in TASK 3).
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: POSTGRES_DB
+            # TODO: the postgres image needs POSTGRES_PASSWORD. Pull it from the Secret.
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: # ___ (which Secret? see secret.yaml)
+                  key: # ___ (which key inside it?)
+          volumeMounts:
+            # postgres:18+ stores data in a version subdir under /var/lib/postgresql,
+            # so mount the PVC at the parent (matches Workshop #1's compose).
+            - name: data
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: db-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-data
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # TODO: the backend's JDBC URL is jdbc:postgresql://db:5432/... — so this Service
+  #       MUST be named to match that hostname. What name?
+  name: # ___
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 5432
+      targetPort: 5432

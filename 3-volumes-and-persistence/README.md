@@ -99,6 +99,14 @@ to be reclaimed manually). Check yours: `kubectl get pv`.
 
 ---
 
+## Stuck?
+
+- Field help: `kubectl explain pvc.spec` and `kubectl explain pod.spec.volumes`.
+- PVC stuck `Pending`? `kubectl describe pvc/demo-data` (read the Events) and check
+  `kubectl get storageclass` — see the multiple-defaults note above.
+- Pod stuck `ContainerCreating`? It's usually the volume — `kubectl describe pod/keeper`.
+- Docs: <https://kubernetes.io/docs/concepts/storage/persistent-volumes/>
+
 ## BONUS
 
 1. A Deployment with `replicas: 3` and one `ReadWriteOnce` PVC — what happens? (RWO =
