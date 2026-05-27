@@ -1,5 +1,7 @@
-# The module-1 Deployment, now wired to mount config from ConfigMaps.
-# Fill in the TODOs as you work through TASK 1, 2, 4, 5.
+# SOLUTION — completed Deployment for module 2 (TASK 1, 2, 5).
+# Mounts custom HTML and a single nginx config file, and reads an env var from a
+# ConfigMap. Apply the two ConfigMaps first:
+#   kubectl apply -f html-configmap.yaml -f nginx-conf-configmap.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,24 +24,25 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            # TASK 1: mount the HTML ConfigMap over nginx's web root.
+            # TASK 1: custom HTML over nginx's web root.
             - name: html
-              mountPath: # TODO: nginx serves files from which directory?
-
-            # TASK 2: mount ONLY default.conf, leaving the rest of conf.d intact.
-            # Uncomment this block for TASK 2.
-            # - name: nginx-conf
-            #   mountPath: /etc/nginx/conf.d/default.conf
-            #   subPath: default.conf
-            #   readOnly: true
-
-          # TASK 4 / TASK 5: add an `env:` block here (see the README).
-
+              mountPath: /usr/share/nginx/html
+            # TASK 2: just default.conf, via subPath (leaves the rest of conf.d intact).
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+          # TASK 5: env var imported from the ConfigMap (vs. TASK 4's literal value).
+          env:
+            - name: GREETING
+              valueFrom:
+                configMapKeyRef:
+                  name: demo-config
+                  key: greeting
       volumes:
         - name: html
           configMap:
-            # TODO: which ConfigMap holds index.html? (see html-configmap.yaml)
-            name: # ___
+            name: demo-html
         - name: nginx-conf
           configMap:
             name: demo-config

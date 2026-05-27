@@ -1,16 +1,14 @@
-# A request for durable storage (TASK 2). Fill in the TODOs.
-# It uses the cluster's default StorageClass (local-path on Rancher Desktop)
-# because no storageClassName is set.
+# SOLUTION — completed PersistentVolumeClaim (module 3, TASK 2).
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: demo-data
 spec:
+  # Set explicitly so the claim always lands on local-path, even on clusters that
+  # have more than one default StorageClass. Drop this line to use the default.
+  storageClassName: local-path
   accessModes:
-    # TODO: this volume only needs to be mounted by one node at a time.
-    #       Which access mode is that? (ReadWriteOnce / ReadOnlyMany / ReadWriteMany)
-    - # ___
+    - ReadWriteOnce      # mountable by one node at a time — fine for a single Pod
   resources:
     requests:
-      # TODO: how much storage? e.g. 1Gi
-      storage: # ___
+      storage: 1Gi

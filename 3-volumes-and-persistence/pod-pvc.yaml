@@ -1,5 +1,4 @@
-# A Pod that mounts the PVC at /data and then idles (TASK 2 + 3).
-# Fill in the claimName TODO to point at the PVC from pvc.yaml.
+# SOLUTION — completed Pod that mounts the PVC at /data (module 3, TASK 2 + 3).
 apiVersion: v1
 kind: Pod
 metadata:
@@ -17,5 +16,4 @@ spec:
   volumes:
     - name: data
       persistentVolumeClaim:
-        # TODO: name of the PVC to mount (see pvc.yaml)
-        claimName: # ___
+        claimName: demo-data

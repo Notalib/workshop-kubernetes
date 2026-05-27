@@ -1,14 +1,12 @@
-# A Service in front of the `demo` Deployment (TASK 4). Fill in the TODOs.
+# SOLUTION — completed Service in front of the `demo` Deployment (module 4, TASK 4).
 apiVersion: v1
 kind: Service
 metadata:
   name: demo
 spec:
-  # The Service routes to Pods whose labels match this selector.
-  # It must match the labels on your Deployment's Pods (app: demo).
   selector:
-    app: # TODO: which label? (see module 1's deployment.yaml)
+    app: demo          # matches the Pods labelled app=demo
   ports:
-    - port: 80          # port the Service exposes
-      targetPort: 80    # port on the Pod/container
-  # type defaults to ClusterIP, which is what we want behind an Ingress.
+    - port: 80         # port the Service exposes
+      targetPort: 80   # port on the Pod/container
+  # type defaults to ClusterIP — what we want behind an Ingress.

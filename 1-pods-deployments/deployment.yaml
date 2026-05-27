@@ -1,8 +1,5 @@
-# A Deployment manifest with gaps to fill in (TASK 8).
-# Fill in every TODO, then:  kubectl apply -f deployment.yaml
-#
+# SOLUTION — completed Deployment manifest (module 1, TASK 8).
 # Docs: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,24 +7,17 @@ metadata:
   labels:
     app: demo
 spec:
-  # TODO: how many identical Pods should run?
-  replicas: # ___
-
-  # The Deployment finds the Pods it owns by matching these labels.
-  # They MUST match .spec.template.metadata.labels below.
+  replicas: 2
   selector:
     matchLabels:
-      app: demo
-
-  # The Pod template: the blueprint every replica is stamped from.
+      app: demo          # selects the Pods this Deployment owns
   template:
     metadata:
       labels:
-        app: # TODO: which label? (must match the selector above)
+        app: demo        # must match the selector above
     spec:
       containers:
         - name: nginx
-          # TODO: which image? Pin a tag, don't use :latest.
-          image: # ___
+          image: nginx:1.27   # pinned tag, never :latest
           ports:
             - containerPort: 80
