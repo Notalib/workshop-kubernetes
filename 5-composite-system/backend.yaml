@@ -49,6 +49,23 @@ spec:
                 secretKeyRef:
                   name: # ___
                   key: # ___
+          # Health probes (provided for you — see the README note).
+          # readiness gates traffic: the Pod joins the Service only once /readyz returns
+          # 200, which is what avoids the brief 502 while Spring is still starting.
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          # liveness restarts the container if /healthz stops responding. The generous
+          # initialDelaySeconds gives Spring time to boot before liveness can fail.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
