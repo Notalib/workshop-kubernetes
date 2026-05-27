@@ -1,0 +1,16 @@
+# A request for durable storage (TASK 2). Fill in the TODOs.
+# It uses the cluster's default StorageClass (local-path on Rancher Desktop)
+# because no storageClassName is set.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-data
+spec:
+  accessModes:
+    # TODO: this volume only needs to be mounted by one node at a time.
+    #       Which access mode is that? (ReadWriteOnce / ReadOnlyMany / ReadWriteMany)
+    - # ___
+  resources:
+    requests:
+      # TODO: how much storage? e.g. 1Gi
+      storage: # ___

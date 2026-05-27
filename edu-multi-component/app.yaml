@@ -1,0 +1,119 @@
+# A complete two-tier system: nginx frontend -> http-echo backend, wired by Services
+# and fronted by an Ingress. Apply the whole thing with one command:
+#   kubectl apply -f app.yaml
+# This is a finished example to read and run — nothing to fill in.
+---
+# ---------- Backend: an echo server that returns request details as JSON ----------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+  labels:
+    app: echo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+        - name: echo
+          image: mendhak/http-https-echo:31
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo            # the frontend reaches the backend by THIS name
+spec:
+  selector:
+    app: echo
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+# ---------- Frontend: nginx reverse-proxying to the `echo` Service ----------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-nginx-conf
+data:
+  default.conf: |-
+    server {
+      listen 80;
+      location / {
+        # "echo" resolves via the cluster's internal DNS to the echo Service.
+        # No Pod IPs anywhere — that's service discovery.
+        proxy_pass http://echo:80;
+        proxy_set_header Host $host;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+      volumes:
+        - name: conf
+          configMap:
+            name: web-nginx-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# ---------- Ingress: the door into the cluster ----------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+spec:
+  ingressClassName: traefik     # Rancher Desktop / k3d; use "nginx" on kind+ingress-nginx
+  rules:
+    - host: app.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

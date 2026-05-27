@@ -1,0 +1,25 @@
+# Two things in one ConfigMap (TASK 2 + TASK 5):
+#  - default.conf : a single nginx config file, mounted via subPath
+#  - greeting     : a plain value, imported as an env var
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-config
+data:
+  greeting: "hello from a ConfigMap"
+  default.conf: |-
+    server {
+      listen 80;
+      server_name _;
+      root /usr/share/nginx/html;
+      index index.html;
+      # Serve the mounted HTML (TASK 1) at /, ...
+      location / {
+        try_files $uri $uri/ =404;
+      }
+      # ... but send anything that doesn't exist to a custom 404 (TASK 2 payoff).
+      error_page 404 @sorry;
+      location @sorry {
+        return 404 "Dead-end\n";
+      }
+    }
