@@ -1,123 +1,140 @@
-# Live cluster demo (facilitator cheat-sheet)
+# Live cluster demo (facilitator cheat-sheet) — Merkur on Nota-BETA
 
-Talking points and commands for showing the **real KB cluster** (dev/staging) during
-the workshop. The value here is everything a single-node local cluster *can't* show:
-multiple nodes, real ingress with DNS + TLS, real storage backends, RBAC, and
-versioned releases actually running.
+Talking points for demoing the **real Merkur application** running on the beta cluster
+(<https://rancher.beta.dbb.dk>, cluster `local` / Nota-BETA), driven from the **Rancher
+UI**. The value here is everything a single-node local cluster *can't* show: multiple
+nodes, a real Helm-managed composite system, real Ingress + DNS + TLS, Longhorn storage,
+and monitoring/logging.
 
-> **Safety:** demo against **dev/staging only**, and keep it read-only — `get`,
-> `describe`, `logs`, `kubectl get -o yaml`. Don't `edit`/`delete` live workloads in
-> front of the room. Pre-pick a namespace/app you're comfortable showing. Double-check
-> your context before you start: `kubectl config current-context`.
+> **Setup:** in Rancher, set the top namespace filter to **`merkur`** so the views match
+> these notes.
+>
+> **Safety:** this is **beta/staging**, so you *can* make changes live (scale, redeploy)
+> — but **revert them afterwards** (scale back, etc.) and never demo destructive actions
+> on production. Each section says what's safe.
 
-Each section below is anchored to **when** in the workshop it lands best.
+Merkur is a real composite system in the `merkur` namespace — roughly:
+`merkur-nota` (the public app, 3 replicas), `merkur-internal`, `merkur-dodp`,
+`merkur-liveupdate`, `merkur-kibana`, an `importer`, and two `redis` caches, with
+Elasticsearch/Longhorn-backed storage behind it. It's deployed as the Helm release
+**`merkur`** (currently on **revision 266**).
+
+Each section is anchored to **when** in the workshop it lands best.
 
 ---
 
-## A. During "Kubernetes Cluster" (deck slides 15–19) — the part local can't show
+## A. During "Kubernetes Cluster" (deck slides 15–19) — multi-node, which local can't show
 
-Their local cluster is a single node. The real one isn't — make the control-plane /
-worker-node split concrete:
+1. **Cluster → Nodes**: point out the worker nodes `betaclustint01/02/03`.
+2. **Workloads → Deployments → `merkur-nota` → Pods tab**: the 3 replicas run on
+   *three different nodes* (`betaclustint01`, `02`, `03`), each with its own Pod IP
+   (`10.42.x.x`).
 
-```bash
-kubectl get nodes -o wide                 # multiple nodes, roles, versions, IPs
-kubectl get pods -n kube-system -o wide    # control-plane components spread across nodes
-kubectl top nodes                          # real resource usage per node
-```
-
-**Talking points:** point out control-plane vs worker roles (slide 17), that workloads
-land on different nodes, and that losing one node doesn't take the app down — the
-scheduler reschedules elsewhere.
+**Talking point:** "This is the same Deployment you wrote locally — but its replicas are
+spread across three machines. Lose a node and the scheduler reschedules its Pods onto
+the others; the app stays up." (Safe — read-only.)
 
 ---
 
 ## B. During "Namespaces" (deck slide 29)
 
-```bash
-kubectl get namespaces
-kubectl get resourcequota -A                       # group-wide limits
-kubectl describe namespace <a-team-namespace>      # labels, quotas
-kubectl auth can-i create deployments -n <ns>      # RBAC in action
-```
-
-**Talking points:** namespaces as the per-team fence — quotas, RBAC, network
-separation — the multi-tenant story behind "autonomous teams" from the strategy slides.
+The namespace filter you set to `merkur` *is* the concept — Merkur's whole world lives
+in one namespace. Drop the filter to show the other teams' namespaces alongside it, and
+mention Rancher **Projects**, resource quotas, and RBAC as the per-team fence. (Safe.)
 
 ---
 
-## C. After module 1 (Pods & Deployments) — self-healing & rollout at real scale
+## C. After module 1 (Pods & Deployments) — self-healing & scaling, via the UI
 
-```bash
-kubectl get deploy -n <app-ns>                     # real replica counts
-kubectl rollout history deployment/<app> -n <app-ns>
-kubectl get events -n <app-ns> --sort-by=.lastTimestamp | tail
-```
+On **`merkur-nota`**:
 
-**Talking points:** real apps run many replicas across nodes; rollouts and rollbacks
-happen here exactly like their local `rollout restart`, just at scale.
+- **Scale:** use the **Pods** card's `− / +` control to go 3 → 4. Watch a new Pod get
+  scheduled (Pods tab). Then **scale back to 3.**
+- **Self-heal:** in the Pods tab, pick one Pod → `⋮` → **Delete**. Watch the Deployment
+  immediately create a replacement to satisfy "3 replicas".
+- **Rollout:** the **Redeploy** button is the UI's `kubectl rollout restart` — it rolls
+  Pods one at a time with zero downtime.
 
----
-
-## D. During module 3 (Volumes & Persistence)
-
-Locally they only have `local-path`. Show real storage:
-
-```bash
-kubectl get storageclass                           # Longhorn / NFS / SMB, not just local-path
-kubectl get pvc -A | head                          # real claims bound to real storage
-kubectl get pv | head                              # the backing volumes + reclaim policies
-```
-
-**Talking points:** different StorageClasses for different needs (RWX via NFS/Longhorn,
-reclaim policies), and that stateful data lives independently of Pods — same PVC concept
-they just learned, backed by real infrastructure.
+**Talking point:** "Exactly your local 'kill the Pod' exercise — on a real app, in a
+browser." (Safe on beta as long as you scale back; avoid Redeploy if the app is in use.)
 
 ---
 
-## E. After module 4 (Exposing Workloads) — the strongest "real" moment
+## D. Config & composite systems (modules 2 & 5)
 
-Locally they reached `demo.localhost` via Traefik. Show a real app on a real domain
-with TLS:
+Merkur is the real version of your module-5 capstone, just bigger:
 
-```bash
-kubectl get ingress -A                             # real hosts: *-devel.kb.dk
-kubectl describe ingress <app> -n <app-ns>         # rules, TLS secret, backend service
-```
+- **Service Discovery → Services**: components find each other by Service name (e.g. the
+  app talking to `redis-cache`, Elasticsearch) — no hardcoded IPs, same as your `db`
+  Service.
+- **More Resources → ConfigMaps / Secrets** (or Storage): show that Merkur's config and
+  credentials live outside the images, injected at runtime — your module-2 pattern.
 
-Then **open the real URL in a browser** — `https://<app>-devel.kb.dk` — and show the
-padlock / certificate.
-
-**Talking points:** external DNS + TLS termination (deck slide 52), the
-Request → Ingress → Service → Pod path running for real.
+**Talking point:** "You wired two components together in module 5. Merkur wires ~9 the
+same way — Services for discovery, ConfigMaps/Secrets for config." (Safe — read-only.)
 
 ---
 
-## F. At the Helm teaser (see [../helm-teaser](../helm-teaser/README.md))
+## E. During module 3 (Volumes & Persistence)
 
-```bash
-helm list -A                                       # real releases running in dev/staging
-helm history <release> -n <ns>                     # real upgrade/rollback history
-```
+Locally they only had `local-path`. Here:
 
-Then show the same releases in **Rancher → Apps**. Ties the teaser to "this is how we
-actually run things here."
+- **Longhorn** (sidebar) — a real distributed storage backend.
+- **Storage → PersistentVolumeClaims** — real claims bound to Longhorn volumes.
+- **Workloads → StatefulSets** — the stateful tier (e.g. the cache/search), which gets
+  stable identity + its own storage (the module-3 BONUS, for real).
+
+**Talking point:** "Real StorageClasses for real needs — replication, snapshots,
+reclaim policies — but the PVC concept is exactly what you just learned." (Safe.)
 
 ---
 
-## G. (Optional) Monitoring & logging
+## F. After module 4 (Exposing Workloads) — the strongest "real" moment
 
-If the cluster has it, this maps to the strategy slides' "ensartet monitorering og
-log-opsamling":
+On **`merkur-nota` → Ingresses tab** (it has 2):
 
-- Open the **Grafana** dashboards / **Rancher** monitoring view.
-- Show aggregated logs for a workload (Loki / your logging stack).
+- show the hosts — e.g. **`merkur.beta.dbb.dk`** (and `merkur-beta.nota.dk`) — and the
+  TLS config.
+- then **open `https://merkur.beta.dbb.dk` in a browser** and show the padlock /
+  certificate.
 
-**Talking points:** uniform monitoring and log aggregation across all teams = the
-"datadrevet drift" goal — something you get for free by standardizing on the platform.
+**Talking point:** "Locally you reached `demo.localhost` through Traefik. Here it's a
+real public hostname with real DNS and TLS termination — Request → Ingress → Service →
+Pod, in production." (Safe — read-only.) *(Staging cluster hostnames look the same
+shape, e.g. `merkur.beta.dbb.dk`.)*
+
+---
+
+## G. At the Helm teaser (see [../helm-teaser](../helm-teaser/README.md)) — the killer example
+
+`merkur-nota`'s labels show **`app.kubernetes.io/managed-by: Helm`**, release
+**`merkur`**, **revision 266**.
+
+- In the UI: **Apps → Installed Apps → `merkur`** — the whole system as *one* release,
+  with its values and revision history. Or via CLI:
+  ```bash
+  helm history merkur -n merkur
+  ```
+
+**Talking point:** "This entire application — every Deployment, Service, Ingress, cache
+— is one Helm release that's been upgraded **266 times**, each a versioned release you
+could roll back to. *That's* what the next workshop is about: packaging the system you
+built in module 5 into a chart like this." (Read-only — do **not** roll back a real
+release in front of the room.)
+
+---
+
+## H. (Optional) Monitoring & logging — "datadrevet drift" (strategy slides)
+
+- Rancher **Monitoring** and **Logging** views for the cluster.
+- Your existing stack: **Graylog** (logs), **Zabbix** (metrics) — whatever you point at.
+
+**Talking point:** "Uniform monitoring and log aggregation across every team — the
+datadrevet-drift goal you get for free by standardizing on the platform." (Read-only.)
 
 ---
 
 ## Suggested flow
 
-A and B during Basics → C/D/E alongside the matching exercise modules → F/G as the
-closing, leading into the Helm workshop tease.
+A + B during Basics → C/D/E/F alongside the matching exercise modules → G + H as the
+close, leading into the Helm workshop tease.
