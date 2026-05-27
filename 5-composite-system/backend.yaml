@@ -30,6 +30,13 @@ spec:
                 configMapKeyRef:
                   name: # ___
                   key: # ___
+            # TODO: database host — import POSTGRES_HOST from the ConfigMap too. This is
+            #       how the backend finds the DB Service; it must match the Service name.
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: # ___
+                  key: # ___
             # TODO: database password — import it from the Secret (secretKeyRef).
             #       Must be the SAME value Postgres uses, or the backend can't log in.
             - name: POSTGRES_PASSWORD

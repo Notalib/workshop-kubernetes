@@ -4,18 +4,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db
+  name: postgres
   labels:
-    app: db
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db
+      app: postgres
   template:
     metadata:
       labels:
-        app: db
+        app: postgres
     spec:
       containers:
         - name: postgres
@@ -60,12 +60,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # TODO: the backend's JDBC URL is jdbc:postgresql://db:5432/... — so this Service
-  #       MUST be named to match that hostname. What name?
+  # TODO: name this Service. The backend reaches the DB at the hostname set in
+  #       POSTGRES_HOST (see configmap.yaml) — so this name MUST match that value.
   name: # ___
 spec:
   selector:
-    app: db
+    app: postgres
   ports:
     - port: 5432
       targetPort: 5432
