@@ -104,6 +104,13 @@ kubectl apply -f backend.yaml
 kubectl rollout status deployment/backend
 ```
 
+> **What's that `enableServiceLinks: false`?** For backwards-compatibility, Kubernetes
+> injects an env var per Service into every Pod — and a Service named `postgres` produces
+> `POSTGRES_PORT=tcp://<ip>:5432`, which would collide with *this app's* `POSTGRES_PORT`
+> and mangle its JDBC URL. We turn those legacy vars off (the manifest does it for you)
+> and rely on DNS + our own config instead. A real footgun worth knowing — if you ever
+> see a value like `tcp://10.x.x.x:5432` show up where you expected a port, this is why.
+
 Watch the backend connect to the database on startup:
 
 ```bash
