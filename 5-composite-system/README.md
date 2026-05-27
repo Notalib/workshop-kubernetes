@@ -16,18 +16,18 @@ Work in your `workshop` namespace.
   Request → Ingress (greetings.localhost) → Service "backend" → Spring Boot Pod
                                                                      │ JDBC: jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
                                                                      ▼
-                                                Service "postgres" → Postgres Pod → PVC
+                                                Service "database" → Postgres Pod → PVC
 ```
 
 > **The key idea — three things must agree.** The backend is a 12-factor app: it reads
 > its database host from the **`POSTGRES_HOST`** environment variable (defaulting to
 > `db`). So service discovery here is a contract between three places that must all
 > match:
-> 1. the **ConfigMap** value `POSTGRES_HOST` (we use `postgres`),
-> 2. the **name of the Postgres Service** you create, and
+> 1. the **ConfigMap** value `POSTGRES_HOST` (we use `database`),
+> 2. the **name of the database Service** you create, and
 > 3. the **`POSTGRES_HOST` env** the backend imports from the ConfigMap.
 >
-> Name the Service `postgres`, set `POSTGRES_HOST=postgres`, wire it into the backend —
+> Name the Service `database`, set `POSTGRES_HOST=database`, wire it into the backend —
 > and they find each other. Change one without the others and the backend can't connect.
 > That's service discovery + config, exactly as the 12-factor "backing services"
 > principle describes.
@@ -73,20 +73,20 @@ kubectl get secret/db-credentials -o jsonpath='{.data.password}' | base64 --deco
 
 Open [`postgres.yaml`](./postgres.yaml) and fill in the `TODO`s:
 
-- the **Service name** — must match `POSTGRES_HOST` in the ConfigMap (`postgres`),
+- the **Service name** — must match `POSTGRES_HOST` in the ConfigMap (`database`),
 - the database password, pulled from the **Secret** (`secretKeyRef`),
 - the **PVC** so data persists.
 
 ```bash
 kubectl apply -f postgres.yaml
-kubectl rollout status deployment/postgres
-kubectl get pvc,svc -l app=postgres
+kubectl rollout status deployment/database
+kubectl get pvc,svc -l app=database
 ```
 
 Confirm Postgres is alive:
 
 ```bash
-kubectl exec deployment/postgres -- pg_isready -U postgres
+kubectl exec deployment/database -- pg_isready -U postgres
 ```
 
 ---
@@ -105,18 +105,11 @@ kubectl apply -f backend.yaml
 kubectl rollout status deployment/backend
 ```
 
-> **What's that `enableServiceLinks: false`?** For backwards-compatibility, Kubernetes
-> injects an env var per Service into every Pod — and a Service named `postgres` produces
-> `POSTGRES_PORT=tcp://<ip>:5432`, which would collide with *this app's* `POSTGRES_PORT`
-> and mangle its JDBC URL. We turn those legacy vars off (the manifest does it for you)
-> and rely on DNS + our own config instead. A real footgun worth knowing — if you ever
-> see a value like `tcp://10.x.x.x:5432` show up where you expected a port, this is why.
-
 Watch the backend connect to the database on startup:
 
 ```bash
 kubectl logs deployment/backend -f
-# look for Hikari/JPA connecting to jdbc:postgresql://postgres:5432/example — Ctrl+C when up
+# look for Hikari/JPA connecting to jdbc:postgresql://database:5432/example — Ctrl+C when up
 ```
 
 > **Health probes (in the manifest for you).** The backend declares two probes:
@@ -132,7 +125,7 @@ kubectl logs deployment/backend -f
 > `0/1` (Running but not Ready) until `/readyz` succeeds, then flips to `1/1`.
 
 If the backend can't reach the DB, the logs will say so — check that `POSTGRES_HOST`,
-the Service name, and the ConfigMap all say `postgres` (TASK 2 + 3).
+the Service name, and the ConfigMap all say `database` (TASK 2 + 3).
 
 ---
 
@@ -146,7 +139,7 @@ Add one through the form at <http://greetings.localhost/new>, then prove it real
 landed in the database by querying Postgres directly:
 
 ```bash
-kubectl exec deployment/postgres -- psql -U postgres -d example -c "SELECT * FROM greetings;"
+kubectl exec deployment/database -- psql -U postgres -d example -c "SELECT * FROM greetings;"
 ```
 
 ---
@@ -160,9 +153,9 @@ kubectl rollout status deployment/backend
 curl http://greetings.localhost/greetings         # still there
 
 # Kill the database Pod — it restarts and reattaches the SAME PVC:
-kubectl delete pod -l app=postgres
-kubectl rollout status deployment/postgres
-kubectl exec deployment/postgres -- psql -U postgres -d example -c "SELECT count(*) FROM greetings;"
+kubectl delete pod -l app=database
+kubectl rollout status deployment/database
+kubectl exec deployment/database -- psql -U postgres -d example -c "SELECT count(*) FROM greetings;"
 ```
 
 Your greetings survive a database Pod restart — that's the PVC from module 3 doing its

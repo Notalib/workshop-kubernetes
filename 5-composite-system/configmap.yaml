@@ -1,10 +1,10 @@
 # Non-secret config shared by the app (TASK 1). Provided complete.
 # POSTGRES_HOST is the hostname the backend will use to reach the database — it must
-# match the name of the Postgres Service you create in TASK 2.
+# match the name of the database Service you create in TASK 2.
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
 data:
   POSTGRES_DB: example
-  POSTGRES_HOST: postgres
+  POSTGRES_HOST: database
