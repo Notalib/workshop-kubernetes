@@ -1,0 +1,70 @@
+# The app tier (TASK 3): the Spring Boot backend, its Service, and an Ingress.
+# Fill in the TODOs (env wiring + ingress).
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          # The image you built in Workshop #1 (must be public on GHCR).
+          image: ghcr.io/notalib/workshop-containerisation/spring-postgres
+          ports:
+            - containerPort: 8080
+          env:
+            # TODO: database name — import it from the ConfigMap (configMapKeyRef).
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: # ___
+                  key: # ___
+            # TODO: database password — import it from the Secret (secretKeyRef).
+            #       Must be the SAME value Postgres uses, or the backend can't log in.
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: # ___
+                  key: # ___
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: greetings
+spec:
+  # TODO: which ingress controller? (traefik on Rancher Desktop)
+  ingressClassName: # ___
+  rules:
+    - host: greetings.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # TODO: route to which Service, on which port?
+                name: # ___
+                port:
+                  number: # ___

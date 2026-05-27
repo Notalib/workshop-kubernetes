@@ -128,6 +128,18 @@ Apply and verify with `printenv` again. To import *all* keys at once, look up
 
 ---
 
+## Stuck?
+
+- Field help: `kubectl explain deployment.spec.template.spec.volumes` and
+  `kubectl explain deployment.spec.template.spec.containers.volumeMounts`.
+- See what actually got mounted: `kubectl exec deployment/demo -- ls /etc/nginx/conf.d`
+  and `kubectl exec deployment/demo -- cat /usr/share/nginx/html/index.html`.
+- Check your keys match: `kubectl get configmap/demo-config -o yaml`.
+- nginx won't start after removing `subPath`? `kubectl describe pod -l app=demo` and
+  read the Events — that's the lesson.
+- Docs: <https://kubernetes.io/docs/concepts/configuration/configmap/> and
+  <https://kubernetes.io/docs/concepts/configuration/secret/>
+
 ## BONUS
 
 1. Mount the **Secret** as a file (not an env var) under `/etc/secrets` and `cat` it
