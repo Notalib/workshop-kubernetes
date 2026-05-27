@@ -16,6 +16,11 @@ spec:
       labels:
         app: backend
     spec:
+      # A Service named "postgres" makes Kubernetes inject legacy env vars like
+      # POSTGRES_PORT=tcp://<ip>:5432, which would collide with this app's own
+      # POSTGRES_PORT and corrupt its JDBC URL. Disable those legacy service-link vars —
+      # we discover the DB via DNS + explicit config, not these. (Provided for you.)
+      enableServiceLinks: false
       containers:
         - name: backend
           image: ghcr.io/notalib/workshop-containerisation/spring-postgres
