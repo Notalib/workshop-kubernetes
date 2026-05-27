@@ -19,7 +19,7 @@ spec:
       # A Service named "postgres" makes Kubernetes inject legacy env vars like
       # POSTGRES_PORT=tcp://<ip>:5432, which would collide with this app's own
       # POSTGRES_PORT and corrupt its JDBC URL. Disable those legacy service-link vars —
-      # we discover the DB via DNS + explicit config, not these. (Provided for you.)
+      # we discover the DB via DNS + explicit config, not these.
       enableServiceLinks: false
       containers:
         - name: backend
@@ -42,6 +42,22 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: password
+          # readiness gates traffic: the Pod joins the Service only once /readyz returns
+          # 200, which avoids the brief 502 while Spring is still starting.
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          # liveness restarts the container if /healthz stops responding (process-only,
+          # no DB check). The generous initialDelaySeconds lets Spring boot first.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service

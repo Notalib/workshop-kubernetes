@@ -39,10 +39,11 @@ This uses the image you built in Workshop #1, published to GHCR:
 your cluster can pull it without credentials. (Postgres is the stock public
 `postgres` image.)
 
-> The image must be the build that reads `POSTGRES_HOST` from the environment
-> (`spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST:db}:...`). If you're using an
-> older build that hard-codes the host to `db`, either rebuild it or just name your
-> Postgres Service `db` and set `POSTGRES_HOST=db` to match.
+> The image must be the build that (a) reads `POSTGRES_HOST` from the environment
+> (`spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST:db}:...`) and (b) exposes the
+> `/healthz` and `/readyz` health endpoints used by the probes in TASK 3. If you're on an
+> older build, name your Postgres Service `db` + set `POSTGRES_HOST=db`, and remove the
+> probes from `backend.yaml`.
 
 > **Private registry instead (e.g. internal Harbor)?** You'd create an image-pull
 > Secret and reference it on the Deployment:
@@ -117,6 +118,18 @@ Watch the backend connect to the database on startup:
 kubectl logs deployment/backend -f
 # look for Hikari/JPA connecting to jdbc:postgresql://postgres:5432/example — Ctrl+C when up
 ```
+
+> **Health probes (in the manifest for you).** The backend declares two probes:
+> - **readiness** → `GET /readyz` (checks the DB). The Pod only joins the Service's
+>   endpoints once this passes — so traffic is never sent to a Pod that's still booting
+>   or whose DB is down. This is what removes the brief 502 you'd otherwise see right
+>   after a rollout.
+> - **liveness** → `GET /healthz` (process only, no DB). If the app wedges, Kubernetes
+>   restarts the container. It deliberately does *not* check the DB — otherwise a DB blip
+>   would restart every backend Pod at once.
+>
+> Watch readiness in action: `kubectl get pods -l app=backend -w` — the Pod stays
+> `0/1` (Running but not Ready) until `/readyz` succeeds, then flips to `1/1`.
 
 If the backend can't reach the DB, the logs will say so — check that `POSTGRES_HOST`,
 the Service name, and the ConfigMap all say `postgres` (TASK 2 + 3).

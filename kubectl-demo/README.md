@@ -85,9 +85,38 @@ Kubernetes brings up new Pods before tearing down old ones. Roll back if it went
 kubectl rollout undo deployment/web
 ```
 
+### Now break it on purpose — and watch nothing break
+
+Push an image that doesn't exist and try to roll it out:
+
+```bash
+kubectl set image deployment/web nginx=nginx:this-tag-does-not-exist
+kubectl rollout status deployment/web    # hangs — the rollout is stuck
+```
+
+In another terminal, look at what's happening:
+
+```bash
+kubectl get deployment/web   # AVAILABLE stays at the old count — still serving!
+kubectl get pods -l app=web  # the NEW Pod is stuck ImagePullBackOff
+```
+
+The bad version **never receives traffic**, because Kubernetes won't tear down the old
+Pods until the new ones are healthy. Zero downtime from a broken deploy. Roll back:
+
+```bash
+kubectl rollout undo deployment/web
+kubectl rollout status deployment/web    # healthy again
+```
+
 ## Observations
 
 - Rolling updates and rollbacks are built in, not something you script.
+- A broken rollout is *safe*: the old version keeps serving until the new one is healthy.
+- **Health probes** make this protection cover apps that *start but aren't ready yet*
+  (e.g. a server still warming up): a **readiness** probe holds traffic until the Pod
+  reports ready, and a **liveness** probe restarts a wedged container. You'll wire real
+  probes into the [module 5 capstone](../5-composite-system/README.md).
 
 ---
 
