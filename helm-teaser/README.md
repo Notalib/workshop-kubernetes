@@ -78,6 +78,11 @@ uninstall it from here too. (Charts can also be browsed and installed visually u
 
 This is how teams actually ship and operate systems on Kubernetes.
 
+> **Real example:** our own **Merkur** app on the beta cluster is the Helm release
+> `merkur` — currently on **revision 266**. Show it (or `helm history merkur -n merkur`)
+> to make the point concrete: a whole production system, versioned 266 times. See
+> [../live-demo](../live-demo/README.md) section G.
+
 ---
 
 ## 5. The hook for Workshop #3
