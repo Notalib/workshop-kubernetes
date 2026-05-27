@@ -1,5 +1,4 @@
-# The database tier (TASK 2): a Postgres Deployment, a Service the backend finds it by,
-# and a PVC so data persists. Fill in the TODOs.
+# SOLUTION — database tier (module 5, TASK 2). Verified on Rancher Desktop / k3s.
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,18 +22,16 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            # Database name — read from the ConfigMap (worked example to copy in TASK 3).
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
                   name: app-config
                   key: POSTGRES_DB
-            # TODO: the postgres image needs POSTGRES_PASSWORD. Pull it from the Secret.
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: # ___ (which Secret? see secret.yaml)
-                  key: # ___ (which key inside it?)
+                  name: db-credentials
+                  key: password
           volumeMounts:
             # postgres:18+ stores data in a version subdir under /var/lib/postgresql,
             # so mount the PVC at the parent (matches Workshop #1's compose).
@@ -60,9 +57,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # TODO: the backend's JDBC URL is jdbc:postgresql://db:5432/... — so this Service
-  #       MUST be named to match that hostname. What name?
-  name: # ___
+  name: db          # matches the backend's JDBC host: jdbc:postgresql://db:5432/...
 spec:
   selector:
     app: db
