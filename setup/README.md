@@ -17,7 +17,7 @@ and it ships a container runtime, `kubectl`, a Traefik ingress controller and a
 
 Open **Preferences → Kubernetes** and match these settings:
 
-![Rancher Desktop — enable Kubernetes](./images/rancher-desktop-enable-kubernetes.png)
+![Rancher Desktop — enable Kubernetes](./images/rancher-desktop-enable-kubernetes.webp)
 
 - ✅ **Enable Kubernetes**.
 - **Kubernetes version** — pick a recent **stable** release (the workshop was tested on
