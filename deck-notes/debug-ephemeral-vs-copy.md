@@ -1,6 +1,6 @@
-# Slide 47 — `kubectl debug`: ephemeral container vs. copy
+# `kubectl debug`: ephemeral container vs. copy
 
-The slide shows two `kubectl debug` examples. They solve **different problems**.
+This shows two `kubectl debug` examples. They solve **different problems**.
 
 ## Example 1 — Ephemeral container (debug a *running* Pod, in place)
 

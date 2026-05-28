@@ -41,9 +41,7 @@ your cluster can pull it without credentials. (Postgres is the stock public
 
 > The image must be the build that (a) reads `POSTGRES_HOST` from the environment
 > (`spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST:db}:...`) and (b) exposes the
-> `/healthz` and `/readyz` health endpoints used by the probes in TASK 3. If you're on an
-> older build, name your Postgres Service `db` + set `POSTGRES_HOST=db`, and remove the
-> probes from `backend.yaml`.
+> `/healthz` and `/readyz` health endpoints used by the probes in TASK 3.
 
 > **Private registry instead (e.g. internal Harbor)?** You'd create an image-pull
 > Secret and reference it on the Deployment:

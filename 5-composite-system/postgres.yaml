@@ -62,7 +62,7 @@ kind: Service
 metadata:
   # TODO: name this Service. The backend reaches the DB at the hostname set in
   #       POSTGRES_HOST (see configmap.yaml) — so this name MUST match that value.
-  name: # ___
+  name: todo-replace-me
 spec:
   selector:
     app: database

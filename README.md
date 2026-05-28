@@ -7,16 +7,16 @@ Workshop #1 was about building and running *one* container. This one is about
 
 ## Repo layout
 
-- [Kubernetes_workshop.pptx](#) — theory parts presented during the workshop.
-- [setup/](./setup/README.md) — **do this first.** Get a local cluster and your own
-  namespace.
+- [Kubernetes_workshop.pptx](./Kubernetes_workshop.pptx) — theory parts presented during the workshop.
+- [setup/](./setup/README.md) — **do this first.** Setup a local cluster and a
+  namespace for this workshop.
 - [kubectl-demo/](./kubectl-demo/README.md) — live-demo showing the power of Kubernetes
-  via `kubectl`. Run by the facilitator during the workshop.
+  via `kubectl`.
 - `<num>-<name>/` — exercise modules for **you** to work through, in order. Each has a
   `README.md` with `TASK` blocks and starter manifests with `TODO`s to fill in.
 - `edu-<name>/` — finished examples to read and run, not exercises.
-- [helm-teaser/](./helm-teaser/README.md) — facilitator demo teasing the Helm workshop.
-- [live-demo/](./live-demo/README.md) — facilitator cheat-sheet for demoing the real cluster.
+- [helm-teaser/](./helm-teaser/README.md) — demo teasing the Helm workshop.
+- [live-demo/](./live-demo/README.md) — facilitator cheat-sheet for demo on a real cluster.
 - [deck-notes/](./deck-notes/README.md) — supporting notes for the presentation.
 
 ## Prerequisites
@@ -43,7 +43,7 @@ Keep these open while you work:
 
 Work through them in order — each builds on the last.
 
-### [1 — Pods & Deployments](./1-pods-deployments/README.md)
+### [1 — Deployments & Pods](./1-deployments-pods/README.md)
 Create an nginx Deployment, scale it, exec in, kill a Pod and watch it heal,
 port-forward, roll out a change. Then write it as a YAML manifest.
 
