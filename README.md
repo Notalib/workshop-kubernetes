@@ -21,14 +21,37 @@ Workshop #1 was about building and running *one* container. This one is about
 
 ## Prerequisites
 
-- Install **Rancher Desktop (Recommended!)** and enable Kubernetes.
-  - Make sure `~/.rd/bin` is on your `PATH` so `kubectl` resolves to Rancher's.
+ℹ️ Skip these if you already have a working local Kubernetes! (with host ingress and a working storage-class).
+Just make sure to check the [setup guide](./setup/README.md) section 4.
+
+- Install **Rancher Desktop (Recommended!)**
+  - Enable Kubernetes under Preferences.
+  - Make sure `~/.rd/bin` is on your `PATH` so `kubectl` resolves to the Rancher provided one.
   - It ships a container runtime, `kubectl`, a **Traefik** ingress controller, and a
     `local-path` storage class — everything these exercises need.
   - If you prefer **kind** or **k3d**, that works too; see notes in
-    [setup/](./setup/README.md) and module 4.
+    [setup/](./setup/README.md) and section 4.
 - Confirm `kubectl get nodes` shows a `Ready` node.
+- Ensure below CLI tools are available on your shell/terminal (can skip optional).
 - Then follow [setup/](./setup/README.md) to create and select your namespace.
+
+### CLI Tools
+
+⚠️ You should make sure that these are available in your shell/terminal. ⚠️ 
+
+- kubectl (included with Rancher Desktop)
+- helm (included with Rancher Desktop)
+- Optional: k9s (NOT included, but priceless tool. [Install guide](https://k9scli.io/topics/install/)).
+- Optional: Use [my aliases]([https://github.com/ddfreiling/dotfiles/blob/master/.aliases#L30-L57](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.aliases#L31-L60)) and [functions]([https://github.com/ddfreiling/dotfiles/blob/master/.functions#L274-L386](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.functions#L274-L439)), for shorter less verbose kubectl commands :speaking_head: 
+
+### IDE Support
+
+#### VS Code extensions
+- Kubernetes by Microsoft [link](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools)
+- (next workshop) Helm Intellisense by Tim Koehler [link](https://marketplace.visualstudio.com/items?itemName=Tim-Koehler.helm-intellisense)
+
+#### IntelliJ Idea plugins
+- Kubernetes by JetBrains [link](https://plugins.jetbrains.com/plugin/10485-kubernetes)
 
 ## Docs
 
