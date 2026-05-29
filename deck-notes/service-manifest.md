@@ -1,4 +1,4 @@
-# Slide 31 — Service manifest
+# Service manifest
 
 Mirrors the style of the Pod manifest (slide 25) and Deployment manifest (slide 27):
 show the YAML on one side, "this manifest says…" bullets on the other.

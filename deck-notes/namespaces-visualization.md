@@ -1,4 +1,4 @@
-# Slide 29 — Namespaces visualization
+# Namespaces visualization
 
 A namespace is a **labelled fence** around a group of resources in one cluster. Same
 physical cluster, logically separated tenants.
@@ -33,5 +33,5 @@ physical cluster, logically separated tenants.
   - Network separation — restrict cross-namespace traffic (NetworkPolicy).
 - **What it does NOT isolate:** nodes, the physical network, and the cluster's storage
   are shared. Namespaces partition the *API objects*, not the hardware.
-- **DNS tie-in (sets up slide 30/52):** a Service's full name includes its namespace —
+- **DNS tie-in:** a Service's full name includes its namespace —
   `web.team-a.svc.cluster.local`. Inside the same namespace you can just say `web`.

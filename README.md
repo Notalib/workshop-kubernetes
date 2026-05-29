@@ -7,28 +7,53 @@ Workshop #1 was about building and running *one* container. This one is about
 
 ## Repo layout
 
-- [Kubernetes_workshop.pptx](#) — theory parts presented during the workshop.
-- [setup/](./setup/README.md) — **do this first.** Get a local cluster and your own
-  namespace.
+- [Kubernetes_workshop.pptx](./Kubernetes_workshop.pptx) — theory parts presented during the workshop.
+- [setup/](./setup/README.md) — **do this first.** Setup a local cluster and a
+  namespace for this workshop.
 - [kubectl-demo/](./kubectl-demo/README.md) — live-demo showing the power of Kubernetes
-  via `kubectl`. Run by the facilitator during the workshop.
+  via `kubectl`.
 - `<num>-<name>/` — exercise modules for **you** to work through, in order. Each has a
   `README.md` with `TASK` blocks and starter manifests with `TODO`s to fill in.
 - `edu-<name>/` — finished examples to read and run, not exercises.
-- [helm-teaser/](./helm-teaser/README.md) — facilitator demo teasing the Helm workshop.
-- [live-demo/](./live-demo/README.md) — facilitator cheat-sheet for demoing the real cluster.
+- [helm-teaser/](./helm-teaser/README.md) — demo teasing the Helm workshop.
+- [live-demo/](./live-demo/README.md) — facilitator cheat-sheet for demo on a real cluster.
 - [deck-notes/](./deck-notes/README.md) — supporting notes for the presentation.
 
 ## Prerequisites
 
-- Install **Rancher Desktop (Recommended!)** and enable Kubernetes.
-  - Make sure `~/.rd/bin` is on your `PATH` so `kubectl` resolves to Rancher's.
+🤓 Skip these if you already have a working local Kubernetes! (with host ingress and a working storage-class).
+Just make sure to check the [setup guide](./setup/README.md) section 4.
+
+- Install **Rancher Desktop (Recommended!)**
+  - Enable Kubernetes under Preferences.
+  - Make sure `~/.rd/bin` is on your `PATH` so `kubectl` resolves to the Rancher provided one.
   - It ships a container runtime, `kubectl`, a **Traefik** ingress controller, and a
     `local-path` storage class — everything these exercises need.
   - If you prefer **kind** or **k3d**, that works too; see notes in
-    [setup/](./setup/README.md) and module 4.
+    [setup/](./setup/README.md) and section 4.
 - Confirm `kubectl get nodes` shows a `Ready` node.
+- Ensure below CLI tools are available on your shell/terminal (can skip optional).
 - Then follow [setup/](./setup/README.md) to create and select your namespace.
+
+### CLI Tools
+
+⚠️ You should make sure that these are available in your shell/terminal. ⚠️ 
+
+- kubectl (included with Rancher Desktop)
+- helm (included with Rancher Desktop)
+- Optional: k9s (NOT included, but priceless tool. [Install guide](https://k9scli.io/topics/install/)).
+- Optional: Use [my aliases]([https://github.com/ddfreiling/dotfiles/blob/master/.aliases#L30-L57](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.aliases#L31-L60)) and [functions]([https://github.com/ddfreiling/dotfiles/blob/master/.functions#L274-L386](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.functions#L274-L439)), for shorter less verbose kubectl commands :speaking_head: 
+
+### IDE Support
+
+⚠️ Highly recommend you have basic IDE support setup for the exercises ⚠️
+
+#### VS Code extensions
+- Kubernetes by Microsoft [link](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools)
+- (next workshop) Helm Intellisense by Tim Koehler [link](https://marketplace.visualstudio.com/items?itemName=Tim-Koehler.helm-intellisense)
+
+#### IntelliJ Idea plugins
+- Kubernetes by JetBrains [link](https://plugins.jetbrains.com/plugin/10485-kubernetes)
 
 ## Docs
 
@@ -43,7 +68,7 @@ Keep these open while you work:
 
 Work through them in order — each builds on the last.
 
-### [1 — Pods & Deployments](./1-pods-deployments/README.md)
+### [1 — Deployments & Pods](./1-deployments-pods/README.md)
 Create an nginx Deployment, scale it, exec in, kill a Pod and watch it heal,
 port-forward, roll out a change. Then write it as a YAML manifest.
 

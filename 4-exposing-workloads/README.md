@@ -108,7 +108,7 @@ Delete the imperative objects and recreate them from YAML. Fill in the `TODO`s i
 kubectl delete service/demo service/demo-np ingress/demo
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
-curl http://demo.localhost
+curl http://localhost -H 'Host: demo.localhost'
 ```
 
 ---
@@ -132,3 +132,5 @@ curl http://demo.localhost
 3. The full internal DNS name is `<service>.<namespace>.svc.cluster.local`. From a
    Pod in *another* namespace, can you reach `demo.workshop`? Why is the namespace
    part needed there but not in TASK 1?
+
+    Hint: check `/etc/resolv.conf` inside container

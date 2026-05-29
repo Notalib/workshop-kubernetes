@@ -1,8 +1,6 @@
 # Deck notes
 
-Markdown drafts for the `TODO` slides in the Kubernetes workshop deck. These are raw
-content for **you to merge into the .pptx** however you see fit — wording, layout, and
-visuals are yours to adapt.
+Extra notes for deck slides that could use further elaboration.
 
 | File | Deck slide |
 |------|-----------|

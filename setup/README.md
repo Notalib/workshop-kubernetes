@@ -78,7 +78,7 @@ kubectl config view --minify | grep namespace:
 # namespace: workshop
 ```
 
-> **Why we make a point of this:** later slides and commands sometimes show an
+> **Why make a point of this:** later in the workshop commands sometimes show an
 > explicit `-n demo` / `-n pods`. Once you understand that `-n` just overrides the
 > namespace for one command — and that your context already has a default — those
 > flags stop being confusing. `-A` (or `--all-namespaces`) shows resources across
