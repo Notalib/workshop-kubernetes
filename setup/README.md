@@ -4,7 +4,23 @@ Do this **once** before the exercises. The goal: a working local cluster, `kubec
 pointed at it, and your own namespace set as the default so you don't have to type
 `-n <namespace>` on every command.
 
+
 ## 1. Get a local cluster
+Here you have a choice of Rancher Desktop, https://k3d.io/ and https://kind.sigs.k8s.io/
+
+We use **Rancher Desktop** in this workshop — it's the same tool from Workshop #1,
+and it ships a container runtime, `kubectl`, a Traefik ingress controller and a
+`local-path` storage class out of the box.
+
+> **Alternatives** (not the supported happy-path, but they work):
+> - **kind** — `kind create cluster`. No ingress by default; you'd install one
+>   (e.g. `ingress-nginx`) yourself. Storage class is `standard` (local).
+> - **k3d** — `k3d cluster create`. Like Rancher, k3s-based, ships Traefik.
+>
+> If you use one of these, the only thing that really changes for these exercises
+> is the ingress controller / ingress class in module 4.
+
+### Rancher Desktop
 
 We use **Rancher Desktop** in this workshop — it's the same tool from Workshop #1,
 and it ships a container runtime, `kubectl`, a Traefik ingress controller and a
@@ -13,7 +29,7 @@ and it ships a container runtime, `kubectl`, a Traefik ingress controller and a
 - Install **Rancher Desktop** and enable Kubernetes in its settings.
 - Make sure `~/.rd/bin` is on your `PATH` (so `kubectl` resolves to Rancher's).
 
-### Enable Kubernetes in Rancher Desktop
+#### Enable Kubernetes in Rancher Desktop
 
 Open **Preferences → Kubernetes** and match these settings:
 
@@ -29,13 +45,12 @@ Open **Preferences → Kubernetes** and match these settings:
 Click **Apply** and wait for the status bar to finish "Starting virtual machine" /
 show Kubernetes as running. First start pulls images and takes a few minutes.
 
-> **Alternatives** (not the supported happy-path, but they work):
-> - **kind** — `kind create cluster`. No ingress by default; you'd install one
->   (e.g. `ingress-nginx`) yourself. Storage class is `standard` (local).
-> - **k3d** — `k3d cluster create`. Like Rancher, k3s-based, ships Traefik.
->
-> If you use one of these, the only thing that really changes for these exercises
-> is the ingress controller / ingress class in module 4.
+### K3D
+k3d is a lightweight wrapper to run k3s (Rancher Lab’s minimal Kubernetes distribution) in docker.
+
+Install with `curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash`
+
+Create a cluster with `k3d cluster create --agents 2`
 
 ## 2. Verify kubectl talks to the cluster
 
