@@ -21,7 +21,7 @@ Workshop #1 was about building and running *one* container. This one is about
 
 ## Prerequisites
 
-ℹ️ Skip these if you already have a working local Kubernetes! (with host ingress and a working storage-class).
+🤓 Skip these if you already have a working local Kubernetes! (with host ingress and a working storage-class).
 Just make sure to check the [setup guide](./setup/README.md) section 4.
 
 - Install **Rancher Desktop (Recommended!)**
@@ -45,6 +45,8 @@ Just make sure to check the [setup guide](./setup/README.md) section 4.
 - Optional: Use [my aliases]([https://github.com/ddfreiling/dotfiles/blob/master/.aliases#L30-L57](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.aliases#L31-L60)) and [functions]([https://github.com/ddfreiling/dotfiles/blob/master/.functions#L274-L386](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.functions#L274-L439)), for shorter less verbose kubectl commands :speaking_head: 
 
 ### IDE Support
+
+⚠️ Highly recommend you have basic IDE support setup for the exercises ⚠️
 
 #### VS Code extensions
 - Kubernetes by Microsoft [link](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools)
