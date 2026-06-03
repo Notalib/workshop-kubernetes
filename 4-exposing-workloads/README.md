@@ -13,7 +13,7 @@ you tore it down, recreate it: `kubectl create deployment demo --image=nginx`.
 > label **selector**. This is the cluster's internal DNS.
 > **Ingress** — HTTP(S) routing from outside the cluster to a Service, by hostname
 > and path. Handles external DNS and TLS termination. Needs an **ingress controller**
-> running (Rancher Desktop ships **Traefik**).
+> running (Rancher Desktop / K3D ships **Traefik**).
 
 ---
 
@@ -94,8 +94,8 @@ kubectl describe ingress/demo
 
 > **Not on Rancher Desktop?** On **kind** there's no ingress controller by default —
 > install one (e.g. `ingress-nginx`) and use `--class=nginx`. On **k3d** it's Traefik
-> like Rancher. The only thing that changes is the `--class` value and how you reach
-> port 80.
+> like Rancher. The only thing that changes is that the cluster must have been created
+> with the parameter  `--port "127.0.0.1:80:80@loadbalancer"`
 
 ---
 
