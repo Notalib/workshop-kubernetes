@@ -117,7 +117,7 @@ explicitly. If you don't see Traefik (e.g. you're on kind), module 4 has a note.
 
 ## Teardown (after the workshop)
 
-Deleting your namespace removes everything you created inside it:
+Deleting your namespace removes everything you created inside it (be careful what you delete):
 
 ```bash
 kubectl delete namespace workshop
