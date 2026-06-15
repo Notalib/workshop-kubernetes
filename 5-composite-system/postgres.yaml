@@ -19,6 +19,10 @@ spec:
       containers:
         - name: postgres
           image: postgres:18.3-alpine3.23
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
           ports:
             - containerPort: 5432
           env:

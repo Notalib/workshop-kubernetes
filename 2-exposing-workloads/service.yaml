@@ -9,4 +9,3 @@ spec:
   ports:
     - port: 80         # port the Service exposes
       targetPort: 80   # port on the Pod/container
-  # type defaults to ClusterIP — what we want behind an Ingress.

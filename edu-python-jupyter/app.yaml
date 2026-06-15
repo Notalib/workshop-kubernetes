@@ -1,0 +1,55 @@
+# A simple HTTP-based service hosting a Python Jupyter notebook for LLM inference development.
+# This is a finished example to read and run — nothing to fill in.
+# Create the whole thing with one command:
+#   kubectl apply -f app.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-jupyter
+  labels:
+    app: python-jupyter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-jupyter
+  template:
+    metadata:
+      labels:
+        app: python-jupyter
+    spec:
+      containers:
+        - name: python-jupyter-demo
+          image: ghcr.io/notalib/workshop-containerisation/python-jupyter-demo:1.2
+          ports:
+            - containerPort: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-jupyter
+spec:
+  selector:
+    app: python-jupyter
+  ports:
+    - port: 80
+      targetPort: 8888
+---
+# ---------- Ingress: the door into the cluster ----------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: python-jupyter
+spec:
+  rules:
+    - host: jupyter.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: python-jupyter
+                port:
+                  number: 80

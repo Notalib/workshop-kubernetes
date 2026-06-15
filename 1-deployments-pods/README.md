@@ -33,7 +33,8 @@ kubectl describe deployment/demo
 
 ```bash
 kubectl scale deployment/demo --replicas=3
-kubectl get pods -o wide        # three Pods now
+kubectl get pods -o wide
+# Should be 3 Pods now
 kubectl scale deployment/demo --replicas=1
 ```
 
@@ -46,7 +47,7 @@ count — the Deployment or the ReplicaSet?
 
 ```bash
 kubectl exec -it deployment/demo -- /bin/sh
-# inside the container:
+# Then inside the container run:
 ls /usr/share/nginx/html
 cat /usr/share/nginx/html/index.html
 exit
@@ -81,7 +82,7 @@ Pod — you have to change the desired state (scale to 0, or delete the Deployme
 
 ```bash
 kubectl port-forward deployment/demo 8080:80
-# open http://localhost:8080  → the nginx welcome page
+# open http://localhost:8080 in a browser. You should see the nginx welcome page
 ```
 
 `8080:80` means **local 8080 → container 80**. Ctrl+C to stop. This is a debugging
@@ -134,7 +135,8 @@ Everything above was imperative. Real systems are described as YAML you can revi
 version. Open [`deployment.yaml`](./deployment.yaml) and fill in the `TODO`s, then:
 
 ```bash
-kubectl delete deployment/demo            # remove the imperative one first
+# remove the imperative one first
+kubectl delete deployment/demo
 kubectl apply -f deployment.yaml
 kubectl get deployment/demo
 ```

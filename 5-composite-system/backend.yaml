@@ -62,8 +62,15 @@ spec:
       #         "
       containers:
         - name: backend
-          # The image you built in Workshop #1 (must be public on GHCR).
+          # The image you built in Workshop #1 (pushed to GitHub Container Registry).
           image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
           ports:
             - containerPort: 8080
           env:
@@ -117,7 +124,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: greetings.localhost
+    - host: localhost
       http:
         paths:
           - path: /

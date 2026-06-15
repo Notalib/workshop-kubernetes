@@ -28,8 +28,15 @@ That created a `ClusterIP` Service named `demo`. Test it **from inside the clust
 the Service is reachable by its DNS name, not from your laptop directly:
 
 ```bash
-kubectl run tester --rm -it --image=busybox:1.36 -- \
-  wget -qO- http://demo
+kubectl run test --rm -it --restart=Never --image=busybox -- wget -qO- http://demo
+```
+
+Alternatively start a sleeping debugger:
+```bash
+kubectl run net-debug --image=nicolaka/netshoot --restart=Never --rm -- sleep infinity
+kubectl exec -it pod/net-debug -- sh
+
+# Then inside the container, try nslookup demo
 ```
 
 `http://demo` resolved because the tester Pod is in the same namespace. The fully
@@ -56,7 +63,8 @@ than exposing each Service directly. But try a NodePort once to see the differen
 
 ```bash
 kubectl expose deployment/demo --name=demo-np --type=NodePort --port=80
-kubectl get service demo-np      # note the high 3xxxx node port
+kubectl get service demo-np
+# note the high 3xxxx node port
 ```
 
 ---
@@ -66,14 +74,15 @@ kubectl get service demo-np      # note the high 3xxxx node port
 Confirm the ingress controller is running:
 
 ```bash
-kubectl get pods -n kube-system | grep traefik     # Rancher Desktop: Traefik
+# Rancher Desktop uses Traefik
+kubectl get pods -n kube-system | grep traefik
 ```
 
-Create an Ingress routing the host `demo.localhost` to your Service:
+Create an Ingress routing the host `localhost` to your Service:
 
 ```bash
 kubectl create ingress demo \
-  --rule="demo.localhost/=demo:80" \
+  --rule="localhost/=demo:80" \
   --class=traefik
 kubectl get ingress demo
 ```
@@ -81,13 +90,11 @@ kubectl get ingress demo
 Now hit it from your host — no port-forward needed:
 
 ```bash
-curl http://demo.localhost
-# open http://demo.localhost in a browser
+curl http://localhost
+# OR open http://localhost in your browser
 ```
 
-`*.localhost` resolves to `127.0.0.1` automatically, and Traefik listens on port 80,
-so this Just Works. Inspect the routing:
-
+Inspect the routing:
 ```bash
 kubectl describe ingress/demo
 ```
@@ -108,7 +115,7 @@ Delete the imperative objects and recreate them from YAML. Fill in the `TODO`s i
 kubectl delete service/demo service/demo-np ingress/demo
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
-curl http://localhost -H 'Host: demo.localhost'
+curl http://localhost -H 'Host: localhost'
 ```
 
 ---
@@ -124,7 +131,7 @@ curl http://localhost -H 'Host: demo.localhost'
 
 ## BONUS
 
-1. Scale `demo` to 3 replicas and `curl http://demo.localhost` repeatedly while
+1. Scale `demo` to 3 replicas and `curl http://localhost` repeatedly while
    running `kubectl get endpoints demo -w`. The Service load-balances across Pods.
 2. Add a second path/host to the Ingress pointing at a *different* Service (deploy
    `traefik/whoami` and route `whoami.localhost` to it). One ingress controller, many
@@ -133,4 +140,4 @@ curl http://localhost -H 'Host: demo.localhost'
    Pod in *another* namespace, can you reach `demo.workshop`? Why is the namespace
    part needed there but not in TASK 1?
 
-    Hint: check `/etc/resolv.conf` inside container
+   Hint: check `/etc/resolv.conf` inside container

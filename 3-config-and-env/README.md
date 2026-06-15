@@ -29,7 +29,8 @@ in the `TODO`s under `volumes` and `volumeMounts`, then apply:
 
 ```bash
 kubectl apply -f deployment.yaml
-kubectl port-forward deployment/demo 8080:80    # http://localhost:8080
+kubectl port-forward deployment/demo 8080:80
+# Open http://localhost:8080 in your browser
 ```
 
 You should see your custom page. **Now the real test:**
@@ -61,7 +62,8 @@ nginx now returns the custom response:
 
 ```bash
 kubectl port-forward deployment/demo 8080:80
-curl http://localhost:8080/anything   # → the "Dead-end" 404 from the config
+curl http://localhost:8080/anything
+# Should give the "Dead-end" 404 result, from the config.
 ```
 
 **Experiment:** remove the `subPath:` line, re-apply, and restart. nginx breaks — why?
@@ -70,26 +72,7 @@ files nginx expects to be there. `subPath` mounts only the single file.)
 
 ---
 
-## TASK 3: A Secret
-
-```bash
-kubectl create secret generic demo-secret --from-literal=api-key=sh-its-a-secret
-kubectl get secret/demo-secret -o yaml
-```
-
-Look at the value — it's base64. Decode it:
-
-```bash
-kubectl get secret/demo-secret -o jsonpath='{.data.api-key}' | base64 --decode; echo
-```
-
-> ⚠️ **base64 is encoding, not encryption.** Anyone who can read the Secret can read
-> the value. Secrets exist to keep credentials out of ConfigMaps/images and to gate
-> access via RBAC — not to hide them from someone with read access.
-
----
-
-## TASK 4: Environment variables, set directly
+## TASK 3: Environment variables, set directly
 
 The simplest config: key/value `env` entries on the container. Add this to the nginx
 container in [`deployment.yaml`](./deployment.yaml):
@@ -108,7 +91,7 @@ kubectl exec -it deployment/demo -- printenv GREETING
 
 ---
 
-## TASK 5: Environment variables from a ConfigMap
+## TASK 4: Environment variables from a ConfigMap
 
 Hard-coding values on the Deployment doesn't scale. Pull them from the ConfigMap
 instead. The `nginx-conf-configmap.yaml` you applied has some plain key/value data;
@@ -142,8 +125,25 @@ Apply and verify with `printenv` again. To import *all* keys at once, look up
 
 ## BONUS
 
-1. Mount the **Secret** as a file (not an env var) under `/etc/secrets` and `cat` it
+1. Add a secret
+
+```bash
+kubectl create secret generic demo-secret --from-literal=api-key=sh-its-a-secret
+kubectl get secret/demo-secret -o yaml
+```
+
+Look at the value — it's base64. Decode it:
+
+```bash
+kubectl get secret/demo-secret -o jsonpath='{.data.api-key}' | base64 --decode; echo
+```
+
+> ⚠️ **base64 is encoding, not encryption.** Anyone who can read the Secret can read
+> the value. Secrets exist to keep credentials out of ConfigMaps/images and to gate
+> access via RBAC — not to hide them from someone with read access.
+
+2. Mount the **Secret** as a file (not an env var) under `/etc/secrets` and `cat` it
    from inside the Pod.
-2. Change a value in a mounted ConfigMap and `kubectl apply`. Mounted ConfigMap files
+3. Change a value in a mounted ConfigMap and `kubectl apply`. Mounted ConfigMap files
    update in place after a short delay (no restart needed) — but **env vars do not**.
    Confirm both behaviors. Which would you use for a value that changes often?

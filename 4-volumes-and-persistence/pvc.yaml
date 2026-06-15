@@ -1,0 +1,17 @@
+# A request for durable storage (TASK 2). Fill in the TODOs.
+# It uses the cluster's default StorageClass (local-path on Rancher Desktop)
+# because no storageClassName is set.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-data
+spec:
+  accessModes:
+    # NOTE: This volume only needs to be mounted & written to by ONE node at a time.
+    #       Possible access modes: ReadWriteOnce / ReadOnlyMany / ReadWriteMany
+    - ReadWriteOnce
+  resources:
+    requests:
+      # Storage size notation: 1Ki, 250Mi, 1Gi (Kilobyte, Megabyte, Gigabyte)
+      # see also https://medium.com/@sanathw/understanding-kubernetes-memory-units-m-vs-mi-a-complete-guide-to-resource-management-5a58cbb9ce46
+      storage: 1Gi

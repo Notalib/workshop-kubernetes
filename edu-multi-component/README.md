@@ -22,7 +22,7 @@ That's service discovery: the thing that makes micro-services possible.
 ```bash
 kubectl apply -f app.yaml
 kubectl get all
-curl http://app.localhost            # nginx proxies your request to the echo backend
+curl http://localhost -H 'Host: app.localhost'    # nginx proxies your request to the echo backend
 ```
 
 You'll get back a JSON dump of the request — produced by the **backend**, delivered
@@ -35,11 +35,11 @@ zero hardcoded IPs.
 # Scale the backend and watch the Service's endpoints follow:
 kubectl scale deployment/echo --replicas=3
 kubectl get endpoints echo
-curl http://app.localhost            # responses now come from different backend Pods
+curl http://localhost -H 'Host: app.localhost'    # responses now come from different backend Pods
 
 # Kill a backend Pod — the frontend keeps working (Service reroutes to healthy Pods):
 kubectl delete pod -l app=echo
-curl http://app.localhost
+curl http://localhost -H 'Host: app.localhost'
 ```
 
 ## Observations
@@ -50,6 +50,8 @@ curl http://app.localhost
   Workshop #1, but with continuous reconciliation, scaling, and self-healing on top.
 
 ## Teardown
+
+Delete all of the resources created by `app.yaml`
 
 ```bash
 kubectl delete -f app.yaml

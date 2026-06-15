@@ -37,12 +37,21 @@ Just make sure to check the [setup guide](./setup/README.md) section 4.
 
 ### CLI Tools
 
-⚠️ You should make sure that these are available in your shell/terminal. ⚠️ 
+⚠️ You should make sure that these are available in your shell/terminal. ⚠️
 
 - kubectl (included with Rancher Desktop)
 - helm (included with Rancher Desktop)
 - Optional: k9s (NOT included, but priceless tool. [Install guide](https://k9scli.io/topics/install/)).
-- Optional: Use [my aliases]([https://github.com/ddfreiling/dotfiles/blob/master/.aliases#L30-L57](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.aliases#L31-L60)) and [functions]([https://github.com/ddfreiling/dotfiles/blob/master/.functions#L274-L386](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.functions#L274-L439)), for shorter less verbose kubectl commands :speaking_head: 
+- Optional: Use [my aliases]([https://github.com/ddfreiling/dotfiles/blob/master/.aliases#L30-L57](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.aliases#L31-L60)) and [functions]([https://github.com/ddfreiling/dotfiles/blob/master/.functions#L274-L386](https://github.com/ddfreiling/dotfiles/blob/cf1a173c8db5ab279a57145ffb39d4e24cc7cbba/.functions#L274-L439)), for shorter less verbose kubectl commands :speaking_head:
+
+#### Bash completion
+
+Using the CLI tool kubectl, becomes much easier, if you have bash completion.
+
+Run this command in your active terminal, or add it to your `~/.bash_profile`
+```bash
+source <(kubectl completion bash)
+```
 
 ### IDE Support
 
@@ -164,7 +173,7 @@ Plus the [docs](https://kubernetes.io/docs), and an LLM makes a strong Kubernete
 - **Pods are disposable.** Never store anything you care about in a Pod's filesystem;
   use a PVC for data that must persist.
 - **Reach workloads by Service name, not Pod IP.** Pod IPs churn; Service DNS is stable.
-- **Pin image tags** (e.g. `nginx:1.27`), don't use `:latest` — same rule as Workshop #1.
+- **Pin image tags** (e.g. `nginx:1.31`), don't use `:latest` — same rule as Workshop #1.
 - **Namespace your work** so you can clean up in one command and avoid collisions.
 
 ## Tools worth knowing

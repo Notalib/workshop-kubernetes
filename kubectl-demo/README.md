@@ -9,7 +9,38 @@ Run everything in your `workshop` namespace (see [../setup](../setup/README.md))
 
 ---
 
+# 0. Are we running?
+
+Let's check if Kubernetes is running and we can make a connection
+
+```bash
+kubectl config view --minify # Authorized via certificates!
+kubectl get nodes
+```
+
 # 1. Run something, the imperative way
+
+## First a very temporary Pod
+
+```bash
+kubectl run hello --rm -it --restart=Never --image=hello-world
+# Could also try an image from workshop #1:
+kubectl run test --rm -it --restart=Never --image=ghcr.io/notalib/workshop-containerisation/ubuntu-debugger
+kubectl run test --rm -it --restart=Never --image=ghcr.io/notalib/workshop-containerisation/java-hello-world
+# Could also replace ubuntu-debugger with java-hello-world or edu-spring-boot
+```
+
+## Now a Pod which stays alive
+
+```bash
+kubectl run nginx --image=nginx
+# Or use our image from workshop #1:
+kubectl run webapp --image=ghcr.io/notalib/workshop-containerisation/static-web-app
+```
+
+But once we `kubectl delete pod/nginx` it's just gone.
+
+## Now let's create a Deployment
 
 ```bash
 kubectl create deployment web --image=nginx
@@ -30,7 +61,8 @@ make that true and keep it true.
 # 2. Self-healing — kill it and watch it come back
 
 ```bash
-kubectl get pods --watch          # leave this running in one terminal
+# leave this running in one terminal
+kubectl get pods --watch
 ```
 
 In another terminal, delete the Pod:
@@ -74,7 +106,7 @@ kubectl scale deployment/web --replicas=2
 # 4. Roll out a change with zero downtime
 
 ```bash
-kubectl set image deployment/web nginx=nginx:1.27
+kubectl set image deployment/web nginx=nginx:1.29
 kubectl rollout status deployment/web
 kubectl rollout history deployment/web
 ```
@@ -91,14 +123,18 @@ Push an image that doesn't exist and try to roll it out:
 
 ```bash
 kubectl set image deployment/web nginx=nginx:this-tag-does-not-exist
-kubectl rollout status deployment/web    # hangs — the rollout is stuck
+kubectl rollout status deployment/web
+# this will hang — the rollout is stuck
 ```
 
 In another terminal, look at what's happening:
 
 ```bash
-kubectl get deployment/web   # AVAILABLE stays at the old count — still serving!
-kubectl get pods -l app=web  # the NEW Pod is stuck ImagePullBackOff
+kubectl get deployment/web
+# AVAILABLE stays at the old count — still serving!
+
+kubectl get pods -l app=web
+# the NEW Pod is stuck ImagePullBackOff
 ```
 
 The bad version **never receives traffic**, because Kubernetes won't tear down the old
@@ -106,7 +142,8 @@ Pods until the new ones are healthy. Zero downtime from a broken deploy. Roll ba
 
 ```bash
 kubectl rollout undo deployment/web
-kubectl rollout status deployment/web    # healthy again
+kubectl rollout status deployment/web
+# healthy again!
 ```
 
 ## Observations
@@ -126,7 +163,7 @@ Quick-and-dirty (just your machine, for debugging):
 
 ```bash
 kubectl port-forward deployment/web 8080:80
-# open http://localhost:8080
+# open http://localhost:8080 in a browser
 ```
 
 The real way — give the Pods a stable identity with a **Service**:
@@ -149,8 +186,8 @@ the cluster, `web` always resolves to whichever Pods are currently healthy.
 # 6. Peek inside
 
 ```bash
-kubectl describe deployment/web        # events, replicas, strategy
-kubectl logs -l app=web                # aggregated stdout/stderr
+kubectl describe deployment/web              # events, replicas, strategy
+kubectl logs -l app=web                      # aggregated stdout/stderr
 kubectl exec -it deployment/web -- /bin/sh   # shell inside a running Pod
 ```
 
