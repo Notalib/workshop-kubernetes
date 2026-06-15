@@ -197,7 +197,79 @@ job. Each tier heals on its own; the Service names keep them wired together.
 2. Move Postgres to a **StatefulSet** with a `volumeClaimTemplate` instead of a
    Deployment + PVC. Why is that the more correct choice for a database? (See
    [edu-multi-component](../edu-multi-component/README.md).)
+
 2. Scale the **backend** to 3 replicas. It works because the backend is stateless — all
    state lives in Postgres. Could you scale Postgres the same way? Why not?
+
 3. Rotate the DB password: change the Secret, then restart both Deployments. What has
    to happen for both tiers to pick up the new value?
+
+4. **Init container** — replace the seed button with a migration step.
+   The "Seed default data" button works, but it's a manual step and it's in the wrong layer
+   (the app shouldn't own schema management). The cloud-native pattern is an **init container**:
+   a short-lived container that runs to completion *before* the main container starts.
+
+   Insert this `initContainers:` block in `backend.yaml` and re-apply:
+
+   ```yaml
+      # BONUS 4: uncomment initContainers to replace the manual "Seed default data" button.
+      # The init container runs to completion BEFORE the backend starts:
+      #   1. waits until Postgres accepts connections (pg_isready loop),
+      #   2. creates the schema (idempotent — CREATE TABLE IF NOT EXISTS),
+      #   3. inserts the default rows (ON CONFLICT DO NOTHING).
+      # The Pod stays in Init:0/1 until this succeeds, then the backend container starts.
+      #
+      initContainers:
+        - name: migrate
+          image: postgres:18.3-alpine3.23
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h $POSTGRES_HOST -p 5432; do
+                echo "waiting for postgres..."; sleep 2
+              done
+              psql postgresql://postgres:$POSTGRES_PASSWORD@$POSTGRES_HOST/$POSTGRES_DB -c "
+                CREATE TABLE IF NOT EXISTS GREETINGS (
+                    id UUID PRIMARY KEY,
+                    name varchar(50) NOT NULL UNIQUE
+                );
+                INSERT INTO GREETINGS(id, name)
+                VALUES (gen_random_uuid(), 'Docker container'),
+                       (gen_random_uuid(), 'An awesome workshop'),
+                       (gen_random_uuid(), 'The Future')
+                ON CONFLICT (name) DO NOTHING;
+              "
+   ```
+
+   ```bash
+   kubectl apply -f backend.yaml
+   kubectl get pods -l app=backend -w   # watch: Init:0/1 → PodInitializing → Running
+   kubectl logs -l app=backend -c migrate  # init container logs: pg_isready + psql output
+   ```
+
+   The Pod stays in `Init:0/1` until Postgres is reachable and the SQL succeeds. Only then
+   does the backend container start — the opposite of the readiness-probe dance you saw
+   earlier. This also means you can delete the postgres Pod during the init phase and watch
+   the init container retry automatically.
+
+   > **Why this beats startup code:** the init container and the app run in separate
+   > containers with separate concerns. The app has `ddl-auto=none` and no SQL init — it
+   > simply assumes the schema exists. Schema management is now an explicit, observable,
+   > retriable step in the Pod lifecycle rather than hidden inside app startup.

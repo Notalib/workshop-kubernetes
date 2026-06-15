@@ -6,21 +6,21 @@ physical cluster, logically separated tenants.
 ## Suggested visual (ASCII sketch to redraw as a diagram)
 
 ```
-┌───────────────────────────── Kubernetes Cluster ─────────────────────────────┐
-│                                                                               │
-│   ┌── namespace: team-a ──────────┐   ┌── namespace: team-b ──────────┐       │
-│   │  Deployment  web              │   │  Deployment  api              │       │
-│   │  Service     web              │   │  Service     api              │       │
-│   │  ConfigMap   web-config       │   │  Secret      api-creds        │       │
-│   │  ── resource quota: 4 CPU ──  │   │  ── RBAC: only team-b can edit│       │
-│   └───────────────────────────────┘   └───────────────────────────────┘       │
-│                                                                               │
-│   ┌── namespace: kube-system (cluster components) ───────────────────────┐    │
-│   │  traefik   coredns   metrics-server   ...                            │    │
-│   └──────────────────────────────────────────────────────────────────────┘   │
-│                                                                               │
-│   Nodes / storage / networking are SHARED across all namespaces.              │
-└───────────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────── Kubernetes Cluster ──────────────────────────┐
+│                                                                           │
+│   ┌── namespace: team-a ──────────┐   ┌── namespace: team-b ──────────┐   │
+│   │  Deployment  web              │   │  Deployment  api              │   │
+│   │  Service     web              │   │  Service     api              │   │
+│   │  ConfigMap   web-config       │   │  Secret      api-creds        │   │
+│   │  ── resource quota: 4 CPU ──  │   │  ── RBAC: only team-b can edit│   │
+│   └───────────────────────────────┘   └───────────────────────────────┘   │
+│                                                                           │
+│   ┌── namespace: kube-system (cluster components) ────────────────────┐   │
+│   │  traefik   coredns   metrics-server   ...                         │   │
+│   └───────────────────────────────────────────────────────────────────┘   │
+│                                                                           │
+│   Nodes / storage / networking are SHARED across all namespaces.          │
+└───────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Talking points

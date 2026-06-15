@@ -25,15 +25,15 @@ Workshop #1 was about building and running *one* container. This one is about
 Just make sure to check the [setup guide](./setup/README.md) section 4.
 
 - Install **Rancher Desktop (Recommended!)**
-  - Enable Kubernetes under Preferences.
   - Make sure `~/.rd/bin` is on your `PATH` so `kubectl` resolves to the Rancher provided one.
   - It ships a container runtime, `kubectl`, a **Traefik** ingress controller, and a
     `local-path` storage class — everything these exercises need.
   - If you prefer **kind** or **k3d**, that works too; see notes in
-    [setup/](./setup/README.md) and section 4.
-- Confirm `kubectl get nodes` shows a `Ready` node.
-- Ensure below CLI tools are available on your shell/terminal (can skip optional).
-- Then follow [setup/](./setup/README.md) to create and select your namespace.
+    [setup](./setup/README.md) (Section 4).
+- Enable _Kubernetes_ under Preferences.
+- Confirm `kubectl get nodes` shows a single `Ready` node (your machine).
+- Ensure below CLI tools are available on your terminal (requires `~/rd/bin` on your path).
+- **When exercises start**: follow [setup](./setup/README.md) to create and select your workshop namespace.
 
 ### CLI Tools
 
