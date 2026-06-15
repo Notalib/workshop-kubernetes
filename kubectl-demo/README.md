@@ -106,7 +106,7 @@ kubectl scale deployment/web --replicas=2
 # 4. Roll out a change with zero downtime
 
 ```bash
-kubectl set image deployment/web nginx=nginx:1.27
+kubectl set image deployment/web nginx=nginx:1.29
 kubectl rollout status deployment/web
 kubectl rollout history deployment/web
 ```
