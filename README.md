@@ -172,7 +172,7 @@ Plus the [docs](https://kubernetes.io/docs), and an LLM makes a strong Kubernete
   changes don't need a rebuild and survive rollouts.
 - **Pods are disposable.** Never store anything you care about in a Pod's filesystem;
   use a PVC for data that must persist.
-- **Reach workloads by Service name, not Pod IP.** Pod IPs churn; Service DNS is stable.
+- **Reach workloads by Service name, not Pod IP.** Pod IPs change; Service DNS is stable.
 - **Pin image tags** (e.g. `nginx:1.31`), don't use `:latest` — same rule as Workshop #1.
 - **Namespace your work** so you can clean up in one command and avoid collisions.
 
@@ -187,9 +187,9 @@ Plus the [docs](https://kubernetes.io/docs), and an LLM makes a strong Kubernete
 1. **Deploy your own image from Workshop #1.** Once the Workshop #1 images are published
    to a registry, deploy one to your cluster, expose it with a Service, and route to it
    with an Ingress — the same artifact you built, now running on Kubernetes. (See
-   [deck-notes/reuse-workshop1-images.md](./deck-notes/reuse-workshop1-images.md).)
+   [5-composite-system](./5-composite-system/README.md).)
 2. Bring the whole `edu-multi-component` system up and add a second backend behind the
    same Ingress on a different host.
-3. Explore the cluster with **k9s** instead of raw `kubectl` for a module.
+3. Explore the cluster with **k9s** instead of raw `kubectl` for some of the exercises.
 4. Tear everything down with a single `kubectl delete namespace workshop` and confirm
    it's all gone with `kubectl get all -A | grep workshop`.
