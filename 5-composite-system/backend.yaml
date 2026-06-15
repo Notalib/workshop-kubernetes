@@ -62,7 +62,7 @@ spec:
       #         "
       containers:
         - name: backend
-          image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.1
+          image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2
           ports:
             - containerPort: 8080
           env:
