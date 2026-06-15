@@ -28,8 +28,15 @@ That created a `ClusterIP` Service named `demo`. Test it **from inside the clust
 the Service is reachable by its DNS name, not from your laptop directly:
 
 ```bash
-kubectl run tester --rm -it --image=busybox:1.36 -- \
-  wget -qO- http://demo
+kubectl run test --rm -it --restart=Never --image=busybox -- wget -qO- http://demo
+```
+
+Alternatively start a sleeping debugger:
+```bash
+kubectl run net-debug --image=nicolaka/netshoot --restart=Never --rm -- sleep infinity
+kubectl exec -it pod/net-debug -- sh
+
+# Then inside the container, try nslookup demo
 ```
 
 `http://demo` resolved because the tester Pod is in the same namespace. The fully
@@ -85,8 +92,7 @@ curl http://demo.localhost
 # open http://demo.localhost in a browser
 ```
 
-`*.localhost` resolves to `127.0.0.1` automatically, and Traefik listens on port 80,
-so this Just Works. Inspect the routing:
+Depends on `*.localhost` resolving to `127.0.0.1` on your machine! Inspect the routing:
 
 ```bash
 kubectl describe ingress/demo

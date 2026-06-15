@@ -13,33 +13,7 @@ Work in your `workshop` namespace.
 
 ---
 
-## TASK 1: `emptyDir` — scratch space shared inside a Pod
-
-An `emptyDir` volume is created when a Pod starts and deleted when the Pod dies. Its
-point is **sharing between containers in the same Pod** (recall: containers in a Pod
-share network, but *not* filesystem unless you mount something).
-
-Apply a Pod with a `writer` and a `reader` container sharing one `emptyDir`:
-
-```bash
-kubectl apply -f pod-emptydir.yaml
-kubectl logs pod/shared -c reader --follow
-```
-
-The reader prints what the writer writes — through the shared volume. Now prove it's
-ephemeral:
-
-```bash
-kubectl delete pod/shared
-kubectl apply -f pod-emptydir.yaml
-kubectl logs pod/shared -c reader
-```
-
-The data is gone — `emptyDir` starts empty every time the Pod is (re)created.
-
----
-
-## TASK 2: A PersistentVolumeClaim that outlives the Pod
+## TASK 1: A PersistentVolumeClaim that outlives the Pod
 
 First, confirm you have a default StorageClass to provision from:
 
@@ -75,7 +49,7 @@ kubectl get pvc        # now Bound
 
 ---
 
-## TASK 3: Prove persistence — kill the Pod, keep the data
+## TASK 2: Prove persistence — kill the Pod, keep the data
 
 ```bash
 kubectl delete pod/keeper
@@ -99,6 +73,32 @@ to be reclaimed manually). Check yours: `kubectl get pv`.
 
 ---
 
+## TASK 3: `emptyDir` — scratch space shared inside a Pod
+
+An `emptyDir` volume is created when a Pod starts and deleted when the Pod dies. Its
+point is **sharing between containers in the same Pod** (recall: containers in a Pod
+share network, but *not* filesystem unless you mount something).
+
+Apply a Pod with a `writer` and a `reader` container sharing one `emptyDir`:
+
+```bash
+kubectl apply -f pod-emptydir.yaml
+kubectl logs pod/shared -c reader --follow
+```
+
+The reader prints what the writer writes — through the shared volume. Now prove it's
+ephemeral:
+
+```bash
+kubectl delete pod/shared
+kubectl apply -f pod-emptydir.yaml
+kubectl logs pod/shared -c reader
+```
+
+The data is gone — `emptyDir` starts empty every time the Pod is (re)created.
+
+---
+
 ## Stuck?
 
 - Field help: `kubectl explain pvc.spec` and `kubectl explain pod.spec.volumes`.
@@ -109,10 +109,7 @@ to be reclaimed manually). Check yours: `kubectl get pv`.
 
 ## BONUS
 
-1. A Deployment with `replicas: 3` and one `ReadWriteOnce` PVC — what happens? (RWO =
-   mountable by one node at a time. This is exactly the problem **StatefulSets** solve
-   by giving each replica its *own* PVC — see [edu-multi-component](../edu-multi-component/README.md).)
-2. Inspect where `local-path` actually put your data on the node:
-   `kubectl get pv -o jsonpath='{.items[0].spec.hostPath.path}{"\n"}'`.
-3. Change the PVC's `accessModes` to `ReadWriteMany` and re-create it. Does
+1. Inspect where `local-path` actually put your data on the node:
+   `kubectl get pv -o jsonpath='{.items[0].spec.local.path}{"\n"}'`.
+2. Change the PVC's `accessModes` to `ReadWriteMany` and re-create it. Does
    `local-path` support it? (Most local provisioners don't — RWX needs NFS/Longhorn/etc.)

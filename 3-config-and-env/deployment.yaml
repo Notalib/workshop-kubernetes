@@ -16,30 +16,31 @@ spec:
       labels:
         app: demo
     spec:
+      volumes:
+        - name: demo-html
+          configMap:
+            # TODO: Replace name with the ConfigMap which holds index.html (see html-configmap.yaml)
+            name: "REPLACE_ME"
+        - name: demo-config
+          configMap:
+            name: demo-config
+
       containers:
         - name: nginx
           image: ghcr.io/notalib/workshop-containerisation/static-web-app:1.2
+          resources: {}
           ports:
             - containerPort: 80
           volumeMounts:
-            # TASK 1: mount the HTML ConfigMap over nginx's web root.
-            - name: html
-              mountPath: # TODO: nginx serves files from which directory?
+            # TASK 1: Apply and check if HTML is replaced
+            - name: demo-html
+              mountPath: /usr/share/nginx/html
 
             # TASK 2: mount ONLY default.conf, leaving the rest of conf.d intact.
             # Uncomment this block for TASK 2.
-            # - name: nginx-conf
+            # - name: demo-config
             #   mountPath: /etc/nginx/conf.d/default.conf
             #   subPath: default.conf
             #   readOnly: true
 
-          # TASK 4 / TASK 5: add an `env:` block here (see the README).
-
-      volumes:
-        - name: html
-          configMap:
-            # TODO: which ConfigMap holds index.html? (see html-configmap.yaml)
-            name: # ___
-        - name: nginx-conf
-          configMap:
-            name: demo-config
+          # TASK 3 / TASK 4: add an `env:` block here (see the README).
