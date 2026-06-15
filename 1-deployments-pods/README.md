@@ -94,7 +94,8 @@ shortcut, not how real traffic reaches the cluster (that's module 4).
 ```bash
 kubectl rollout restart deployment/demo
 kubectl rollout status deployment/demo
-kubectl get pods            # note the Pod name changed — it's a fresh Pod
+kubectl get pods
+# note the Pod name changed! It's a fresh Pod
 ```
 
 **What happened?** A rollout replaced the old Pod with a new one. Any change you made
@@ -109,7 +110,8 @@ First, the quick (and doomed) way — edit it live inside the Pod:
 ```bash
 kubectl exec -it deployment/demo -- /bin/sh -c \
   'echo "<h1>Hello from the workshop</h1>" > /usr/share/nginx/html/index.html'
-kubectl port-forward deployment/demo 8080:80   # confirm it shows your text
+kubectl port-forward deployment/demo 8080:80
+# Now confirm it shows your text
 ```
 
 Now trigger a rollout and check again:

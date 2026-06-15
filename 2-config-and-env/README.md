@@ -146,4 +146,4 @@ Apply and verify with `printenv` again. To import *all* keys at once, look up
    from inside the Pod.
 2. Change a value in a mounted ConfigMap and `kubectl apply`. Mounted ConfigMap files
    update in place after a short delay (no restart needed) — but **env vars do not**.
-   Confirm both behaviours. Which would you use for a value that changes often?
+   Confirm both behaviors. Which would you use for a value that changes often?

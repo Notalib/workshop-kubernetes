@@ -40,10 +40,18 @@ spec:
             # so mount the PVC at the parent (matches Workshop #1's compose).
             - name: data
               mountPath: /var/lib/postgresql
+            # Runs once on first DB init (empty PGDATA) to create the GREETINGS table.
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d/schema.sql
+              subPath: schema.sql
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: db-data
+        - name: initdb
+          configMap:
+            name: app-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
