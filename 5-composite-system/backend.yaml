@@ -20,7 +20,7 @@ spec:
       containers:
         - name: backend
           # The image you built in Workshop #1 (must be public on GHCR).
-          image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.1
+          image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2
           ports:
             - containerPort: 8080
           env:
