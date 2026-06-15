@@ -8,3 +8,10 @@ metadata:
 data:
   POSTGRES_DB: example
   POSTGRES_HOST: database
+  # Mounted into the postgres container at /docker-entrypoint-initdb.d/ — runs once on
+  # first DB initialisation (empty PGDATA) to create the GREETINGS table.
+  schema.sql: |
+    CREATE TABLE IF NOT EXISTS GREETINGS (
+        id UUID PRIMARY KEY,
+        name varchar(50) NOT NULL UNIQUE
+    );

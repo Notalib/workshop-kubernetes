@@ -35,7 +35,7 @@ Work in your `workshop` namespace.
 ## Prerequisite: the backend image
 
 This uses the image you built in Workshop #1, published to GHCR:
-`ghcr.io/notalib/workshop-containerisation/spring-postgres`. It must be **public** so
+`ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.1`. It must be **public** so
 your cluster can pull it without credentials. (Postgres is the stock public
 `postgres` image.)
 
@@ -171,7 +171,30 @@ job. Each tier heals on its own; the Service names keep them wired together.
 
 ## BONUS
 
-1. Move Postgres to a **StatefulSet** with a `volumeClaimTemplate` instead of a
+1. **Init container — replace the seed button with a migration step.**
+   The "Seed default data" button works, but it's a manual step and it's in the wrong layer
+   (the app shouldn't own schema management). The cloud-native pattern is an **init container**:
+   a short-lived container that runs to completion *before* the main container starts.
+
+   Uncomment the `initContainers:` block in `backend.yaml` and re-apply:
+
+   ```bash
+   kubectl apply -f backend.yaml
+   kubectl get pods -l app=backend -w   # watch: Init:0/1 → PodInitializing → Running
+   kubectl logs -l app=backend -c migrate  # init container logs: pg_isready + psql output
+   ```
+
+   The Pod stays in `Init:0/1` until Postgres is reachable and the SQL succeeds. Only then
+   does the backend container start — the opposite of the readiness-probe dance you saw
+   earlier. This also means you can delete the postgres Pod during the init phase and watch
+   the init container retry automatically.
+
+   > **Why this beats startup code:** the init container and the app run in separate
+   > containers with separate concerns. The app has `ddl-auto=none` and no SQL init — it
+   > simply assumes the schema exists. Schema management is now an explicit, observable,
+   > retriable step in the Pod lifecycle rather than hidden inside app startup.
+
+2. Move Postgres to a **StatefulSet** with a `volumeClaimTemplate` instead of a
    Deployment + PVC. Why is that the more correct choice for a database? (See
    [edu-multi-component](../edu-multi-component/README.md).)
 2. Scale the **backend** to 3 replicas. It works because the backend is stateless — all

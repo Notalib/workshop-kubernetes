@@ -16,9 +16,53 @@ spec:
       labels:
         app: backend
     spec:
+      # BONUS 4: uncomment initContainers to replace the manual "Seed default data" button.
+      # The init container runs to completion BEFORE the backend starts:
+      #   1. waits until Postgres accepts connections (pg_isready loop),
+      #   2. creates the schema (idempotent — CREATE TABLE IF NOT EXISTS),
+      #   3. inserts the default rows (ON CONFLICT DO NOTHING).
+      # The Pod stays in Init:0/1 until this succeeds, then the backend container starts.
+      #
+      # initContainers:
+      #   - name: migrate
+      #     image: postgres:18.3-alpine3.23   # same image as the DB tier — psql is included
+      #     env:
+      #       - name: POSTGRES_DB
+      #         valueFrom:
+      #           configMapKeyRef:
+      #             name: app-config
+      #             key: POSTGRES_DB
+      #       - name: POSTGRES_HOST
+      #         valueFrom:
+      #           configMapKeyRef:
+      #             name: app-config
+      #             key: POSTGRES_HOST
+      #       - name: POSTGRES_PASSWORD
+      #         valueFrom:
+      #           secretKeyRef:
+      #             name: db-credentials
+      #             key: password
+      #     command:
+      #       - sh
+      #       - -c
+      #       - |
+      #         until pg_isready -h $POSTGRES_HOST -p 5432; do
+      #           echo "waiting for postgres..."; sleep 2
+      #         done
+      #         psql postgresql://postgres:$POSTGRES_PASSWORD@$POSTGRES_HOST/$POSTGRES_DB -c "
+      #           CREATE TABLE IF NOT EXISTS GREETINGS (
+      #               id UUID PRIMARY KEY,
+      #               name varchar(50) NOT NULL UNIQUE
+      #           );
+      #           INSERT INTO GREETINGS(id, name)
+      #           VALUES (gen_random_uuid(), 'Docker container'),
+      #                  (gen_random_uuid(), 'An awesome workshop'),
+      #                  (gen_random_uuid(), 'The Future')
+      #           ON CONFLICT (name) DO NOTHING;
+      #         "
       containers:
         - name: backend
-          image: ghcr.io/notalib/workshop-containerisation/spring-postgres
+          image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.1
           ports:
             - containerPort: 8080
           env:
