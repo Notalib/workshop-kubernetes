@@ -35,7 +35,7 @@ Work in your `workshop` namespace.
 ## Prerequisite: the backend image
 
 This uses the image you built in Workshop #1, published to GHCR:
-`ghcr.io/notalib/workshop-containerisation/spring-postgres`. It must be **public** so
+`ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2`. It must be **public** so
 your cluster can pull it without credentials. (Postgres is the stock public
 `postgres` image.)
 
