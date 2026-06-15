@@ -29,7 +29,8 @@ in the `TODO`s under `volumes` and `volumeMounts`, then apply:
 
 ```bash
 kubectl apply -f deployment.yaml
-kubectl port-forward deployment/demo 8080:80    # http://localhost:8080
+kubectl port-forward deployment/demo 8080:80
+# Open http://localhost:8080 in your browser
 ```
 
 You should see your custom page. **Now the real test:**
@@ -61,7 +62,8 @@ nginx now returns the custom response:
 
 ```bash
 kubectl port-forward deployment/demo 8080:80
-curl http://localhost:8080/anything   # → the "Dead-end" 404 from the config
+curl http://localhost:8080/anything
+# Should give the "Dead-end" 404 result, from the config.
 ```
 
 **Experiment:** remove the `subPath:` line, re-apply, and restart. nginx breaks — why?

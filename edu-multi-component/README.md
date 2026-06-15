@@ -51,6 +51,8 @@ curl http://localhost -H 'Host: app.localhost'
 
 ## Teardown
 
+Delete all of the resources created by `app.yaml`
+
 ```bash
 kubectl delete -f app.yaml
 ```

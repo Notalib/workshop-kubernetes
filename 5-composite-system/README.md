@@ -13,14 +13,15 @@ now running on Kubernetes. This pulls together everything from modules 1–4:
 Work in your `workshop` namespace.
 
 ```
-  Request → Ingress (localhost) → Service "backend" → Spring Boot Pod
-                                                               │ JDBC: jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
+  Request → Ingress (localhost) → Service (backend) → Spring Boot Pod
+                                                               │
+                                                               │ jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
                                                                │
                                                                ▼
-                                                Service "database" → Postgres Pod → PVC
+                                                   Service "database" → Postgres Pod → PVC
 ```
 
-> **The key idea — three things must agree.** The backend is a 12-factor app: it reads
+> **The key idea — three things must agree.** The backend is a "12-factor app": it reads
 > its database host from the **`POSTGRES_HOST`** environment variable (defaulting to
 > `db`). So service discovery here is a contract between three places that must all
 > match:

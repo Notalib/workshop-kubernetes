@@ -98,7 +98,7 @@ On **`merkur-nota` → Ingresses tab** (it has 2):
 - then **open `https://merkur.beta.dbb.dk` in a browser** and show the padlock /
   certificate.
 
-**Talking point:** "Locally you reached `demo.localhost` through Traefik. Here it's a
+**Talking point:** "Locally you reached `localhost` through Traefik. Here it's a
 real public hostname with real DNS and TLS termination — Request → Ingress → Service →
 Pod, in production." (Safe — read-only.) *(Staging cluster hostnames look the same
 shape, e.g. `merkur.beta.dbb.dk`.)*

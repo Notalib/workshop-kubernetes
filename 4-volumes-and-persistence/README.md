@@ -44,7 +44,9 @@ Now run a Pod that mounts the PVC and writes a file. Open
 ```bash
 kubectl apply -f pod-pvc.yaml
 kubectl exec -it pod/keeper -- sh -c 'echo "written at $(date)" >> /data/log.txt; cat /data/log.txt'
-kubectl get pvc        # now Bound
+kubectl get pvc
+# The PVC should now be "Bound" to a real piece of storage (PV)
+kubectl get pv
 ```
 
 ---
@@ -64,7 +66,8 @@ Now delete the claim and watch the data go:
 
 ```bash
 kubectl delete pod/keeper
-kubectl delete pvc/demo-data       # releases the PV; with Delete reclaim policy, storage is freed
+kubectl delete pvc/demo-data
+# This releases the PV; with Delete reclaim-policy, storage is freed when unclaimed.
 ```
 
 **Reclaim policy** decides what happens to the PV when its PVC is deleted: `Delete`

@@ -63,7 +63,8 @@ than exposing each Service directly. But try a NodePort once to see the differen
 
 ```bash
 kubectl expose deployment/demo --name=demo-np --type=NodePort --port=80
-kubectl get service demo-np      # note the high 3xxxx node port
+kubectl get service demo-np
+# note the high 3xxxx node port
 ```
 
 ---
@@ -73,7 +74,8 @@ kubectl get service demo-np      # note the high 3xxxx node port
 Confirm the ingress controller is running:
 
 ```bash
-kubectl get pods -n kube-system | grep traefik     # Rancher Desktop: Traefik
+# Rancher Desktop uses Traefik
+kubectl get pods -n kube-system | grep traefik
 ```
 
 Create an Ingress routing the host `localhost` to your Service:
@@ -89,7 +91,7 @@ Now hit it from your host — no port-forward needed:
 
 ```bash
 curl http://localhost
-# OR just open http://localhost in your browser
+# OR open http://localhost in your browser
 ```
 
 Inspect the routing:
