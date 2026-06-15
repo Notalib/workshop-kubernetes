@@ -32,7 +32,7 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            # TASK 1: Apply and check if HTML is replaced
+            # TASK 1: Apply this deployment and check if HTML has been replaced.
             - name: demo-html
               mountPath: /usr/share/nginx/html
 
@@ -41,6 +41,8 @@ spec:
             # - name: demo-config
             #   mountPath: /etc/nginx/conf.d/default.conf
             #   subPath: default.conf
-            #   readOnly: true
 
-          # TASK 3 / TASK 4: add an `env:` block here (see the README).
+          # TASK 3 / TASK 4: Fill in the `env:` block here (see README).
+          env:
+            - name: FOO
+              value: bar

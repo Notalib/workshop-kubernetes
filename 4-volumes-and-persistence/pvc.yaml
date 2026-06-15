@@ -7,10 +7,11 @@ metadata:
   name: demo-data
 spec:
   accessModes:
-    # TODO: this volume only needs to be mounted by one node at a time.
-    #       Which access mode is that? (ReadWriteOnce / ReadOnlyMany / ReadWriteMany)
-    - # ___
+    # NOTE: This volume only needs to be mounted & written to by ONE node at a time.
+    #       Possible access modes: ReadWriteOnce / ReadOnlyMany / ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      # TODO: how much storage? e.g. 1Gi
-      storage: # ___
+      # Storage size notation: 1Ki, 250Mi, 1Gi (Kilobyte, Megabyte, Gigabyte)
+      # see also https://medium.com/@sanathw/understanding-kubernetes-memory-units-m-vs-mi-a-complete-guide-to-resource-management-5a58cbb9ce46
+      storage: # TODO: how much storage?

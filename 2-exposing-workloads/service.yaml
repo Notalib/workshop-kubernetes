@@ -9,6 +9,5 @@ spec:
   selector:
     app: # TODO: which label? (see module 1's deployment.yaml)
   ports:
-    - port: 80          # port the Service exposes
-      targetPort: 80    # port on the Pod/container
-  # type defaults to ClusterIP, which is what we want behind an Ingress.
+    - port: 80                # port the Service exposes
+      targetPort: 80          # port on the Pod/container

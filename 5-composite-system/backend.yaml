@@ -19,31 +19,31 @@ spec:
     spec:
       containers:
         - name: backend
-          # The image you built in Workshop #1 (must be public on GHCR).
+          # The image you built in Workshop #1 (pushed to GitHub Container Registry).
           image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2
           ports:
             - containerPort: 8080
           env:
-            # TODO: database name — import it from the ConfigMap (configMapKeyRef).
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: # ___
-                  key: # ___
             # TODO: database host — import POSTGRES_HOST from the ConfigMap too. This is
             #       how the backend finds the DB Service; it must match the Service name.
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: # ___
-                  key: # ___
+                  name: # TODO: Which ConfigMap?
+                  key: # TODO: Which key in the ConfigMap contains the DB hostname?
+            # TODO: database name — import it from the ConfigMap (configMapKeyRef).
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: # TODO: Which ConfigMap?
+                  key: # TODO: Which key in the ConfigMap contains the DB name?
             # TODO: database password — import it from the Secret (secretKeyRef).
             #       Must be the SAME value Postgres uses, or the backend can't log in.
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: # ___
-                  key: # ___
+                  name: # TODO: Which Secret?
+                  key: # TODO: Which key in the Secret contains the password?
           # Health probes (provided for you — see the README note).
           # readiness gates traffic: the Pod joins the Service only once /readyz returns
           # 200, which is what avoids the brief 502 while Spring is still starting.
@@ -78,17 +78,15 @@ kind: Ingress
 metadata:
   name: greetings
 spec:
-  # TODO: which ingress controller? (traefik on Rancher Desktop)
-  ingressClassName: # ___
+  # ingressClassName is not provided, so it should use default. (traefik on Rancher Desktop)
   rules:
-    - host: greetings.localhost
+    - host: localhost
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                # TODO: route to which Service, on which port?
-                name: # ___
+                name: # TODO: route to which Service name?
                 port:
-                  number: # ___
+                  number: # TODO: on which port?

@@ -12,15 +12,17 @@ spec:
     - name: writer
       image: busybox:1.36
       command: ["sh", "-c", "while true; do echo \"$(date) tick\" >> /shared/out.txt; sleep 2; done"]
+      resources: {}
       volumeMounts:
-        - name: scratch
+        - name: scratch # Reference to shared volume in writer
           mountPath: /shared
     - name: reader
       image: busybox:1.36
       command: ["sh", "-c", "sleep 2; tail -f /shared/out.txt"]
+      resources: {}
       volumeMounts:
-        - name: scratch
+        - name: scratch # Reference to shared volume in reader
           mountPath: /shared
   volumes:
-    - name: scratch
+    - name: scratch # Name of referenced shared volume
       emptyDir: {}

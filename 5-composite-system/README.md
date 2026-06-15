@@ -13,9 +13,10 @@ now running on Kubernetes. This pulls together everything from modules 1–4:
 Work in your `workshop` namespace.
 
 ```
-  Request → Ingress (greetings.localhost) → Service "backend" → Spring Boot Pod
-                                                                     │ JDBC: jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
-                                                                     ▼
+  Request → Ingress (localhost) → Service "backend" → Spring Boot Pod
+                                                               │ JDBC: jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
+                                                               │
+                                                               ▼
                                                 Service "database" → Postgres Pod → PVC
 ```
 
@@ -130,10 +131,10 @@ the Service name, and the ConfigMap all say `database` (TASK 2 + 3).
 ## TASK 4: Use the app, end to end
 
 ```bash
-curl http://greetings.localhost/greetings        # list greetings (served from Postgres)
+curl http://localhost/greetings        # list greetings (served from Postgres)
 ```
 
-Add one through the form at <http://greetings.localhost/new>, then prove it really
+Add one through the form at <http://localhost/new>, then prove it really
 landed in the database by querying Postgres directly:
 
 ```bash
@@ -148,7 +149,7 @@ kubectl exec deployment/database -- psql -U postgres -d example -c "SELECT * FRO
 # Kill the backend — the database (and your data) is untouched:
 kubectl delete pod -l app=backend
 kubectl rollout status deployment/backend
-curl http://greetings.localhost/greetings         # still there
+curl http://localhost/greetings         # still there
 
 # Kill the database Pod — it restarts and reattaches the SAME PVC:
 kubectl delete pod -l app=database

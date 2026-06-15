@@ -33,8 +33,8 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: # ___ (which Secret? see secret.yaml)
-                  key: # ___ (which key inside it?)
+                  name: # TODO: which Secret? (see secret.yaml)
+                  key: # TODO: which key inside it?
           volumeMounts:
             # postgres:18+ stores data in a version subdir under /var/lib/postgresql,
             # so mount the PVC at the parent (matches Workshop #1's compose).
@@ -68,9 +68,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # TODO: name this Service. The backend reaches the DB at the hostname set in
-  #       POSTGRES_HOST (see configmap.yaml) — so this name MUST match that value.
-  name: todo-replace-me
+  # The backend reaches the DB at the hostname set in
+  # POSTGRES_HOST (see configmap.yaml) — so this name MUST match that value.
+  name: # TODO: name this Service
 spec:
   selector:
     app: database

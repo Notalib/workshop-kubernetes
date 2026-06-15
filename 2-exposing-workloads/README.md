@@ -76,11 +76,11 @@ Confirm the ingress controller is running:
 kubectl get pods -n kube-system | grep traefik     # Rancher Desktop: Traefik
 ```
 
-Create an Ingress routing the host `demo.localhost` to your Service:
+Create an Ingress routing the host `localhost` to your Service:
 
 ```bash
 kubectl create ingress demo \
-  --rule="demo.localhost/=demo:80" \
+  --rule="localhost/=demo:80" \
   --class=traefik
 kubectl get ingress demo
 ```
@@ -88,12 +88,11 @@ kubectl get ingress demo
 Now hit it from your host — no port-forward needed:
 
 ```bash
-curl http://demo.localhost
-# open http://demo.localhost in a browser
+curl http://localhost
+# OR just open http://localhost in your browser
 ```
 
-Depends on `*.localhost` resolving to `127.0.0.1` on your machine! Inspect the routing:
-
+Inspect the routing:
 ```bash
 kubectl describe ingress/demo
 ```
@@ -114,7 +113,7 @@ Delete the imperative objects and recreate them from YAML. Fill in the `TODO`s i
 kubectl delete service/demo service/demo-np ingress/demo
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
-curl http://localhost -H 'Host: demo.localhost'
+curl http://localhost -H 'Host: localhost'
 ```
 
 ---
@@ -130,7 +129,7 @@ curl http://localhost -H 'Host: demo.localhost'
 
 ## BONUS
 
-1. Scale `demo` to 3 replicas and `curl http://demo.localhost` repeatedly while
+1. Scale `demo` to 3 replicas and `curl http://localhost` repeatedly while
    running `kubectl get endpoints demo -w`. The Service load-balances across Pods.
 2. Add a second path/host to the Ingress pointing at a *different* Service (deploy
    `traefik/whoami` and route `whoami.localhost` to it). One ingress controller, many
@@ -139,4 +138,4 @@ curl http://localhost -H 'Host: demo.localhost'
    Pod in *another* namespace, can you reach `demo.workshop`? Why is the namespace
    part needed there but not in TASK 1?
 
-    Hint: check `/etc/resolv.conf` inside container
+   Hint: check `/etc/resolv.conf` inside container
