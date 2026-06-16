@@ -28,6 +28,7 @@ spec:
       containers:
         - name: nginx
           image: ghcr.io/notalib/workshop-containerisation/static-web-app:1.2
+          # Image source: https://github.com/Notalib/workshop-containerisation/blob/solutions/5-static-web-app/Dockerfile
           resources: {}
           ports:
             - containerPort: 80

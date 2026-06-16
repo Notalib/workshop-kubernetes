@@ -1,5 +1,6 @@
 # A simple HTTP-based service hosting a Python Jupyter notebook for LLM inference development.
 # This is a finished example to read and run — nothing to fill in.
+#
 # Create the whole thing with one command:
 #   kubectl apply -f app.yaml
 ---
@@ -22,6 +23,8 @@ spec:
       containers:
         - name: python-jupyter-demo
           image: ghcr.io/notalib/workshop-containerisation/python-jupyter-demo:1.2
+          # Image source: https://github.com/Notalib/workshop-containerisation/blob/solutions/6-python-jupyter/Dockerfile.solution
+          resources: {}
           ports:
             - containerPort: 8888
 ---
