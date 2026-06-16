@@ -26,8 +26,9 @@ We use **Rancher Desktop** in this workshop — it's the same tool from Workshop
 and it ships a container runtime, `kubectl`, a Traefik ingress controller and a
 `local-path` storage class out of the box.
 
-- Install **Rancher Desktop** and enable Kubernetes in its settings.
-- Make sure `~/.rd/bin` is on your `PATH` (so `kubectl` resolves to Rancher's).
+1. Install **Rancher Desktop** and enable Kubernetes in its settings.
+2. Make sure `~/.rd/bin` is on your `PATH` (so `kubectl` resolves to Rancher's).
+3. Allow Rancher Desktop to bind port 80: `sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80`
 
 #### Enable Kubernetes in Rancher Desktop
 

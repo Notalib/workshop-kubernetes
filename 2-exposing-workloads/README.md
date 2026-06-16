@@ -17,6 +17,38 @@ you tore it down, recreate it: `kubectl create deployment demo --image=nginx`.
 
 ---
 
+## Pre-req: Ensure Rancher Desktop is exposed.
+
+Confirm that Rancher Desktop has bound port 80 on your machine:
+
+```bash
+curl -s http://localhost
+# You should see: 404 page not found
+```
+
+If you do NOT see a response, then follow these steps:
+
+Temporary fix:
+```bash
+# Fix (survives until reboot):
+sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80
+```
+
+Permanent fix:
+```bash
+sudo echo "net.ipv4.ip_unprivileged_port_start=80" >> /etc/sysctl.d/99-rancher.conf
+sudo sysctl --system
+```
+
+Finally restart Rancher Desktop entirely
+```bash
+rdctl shutdown && rdctl start
+```
+
+Traefik should now have bound port 80. Test with the first cURL command.
+
+---
+
 ## TASK 1: Put a Service in front of the Deployment
 
 ```bash
