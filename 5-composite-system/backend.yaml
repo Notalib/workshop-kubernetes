@@ -64,6 +64,7 @@ spec:
         - name: backend
           # The image you built in Workshop #1 (pushed to GitHub Container Registry).
           image: ghcr.io/notalib/workshop-containerisation/edu-spring-boot:1.2
+          # Image source: https://github.com/Notalib/workshop-containerisation/blob/solutions/edu-spring-postgres/backend/Dockerfile
           resources:
             requests:
               cpu: 200m
