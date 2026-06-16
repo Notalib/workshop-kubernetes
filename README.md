@@ -33,7 +33,6 @@ Just make sure to check the [setup guide](./setup/README.md) section 4.
 - Enable _Kubernetes_ under Preferences.
 - Confirm `kubectl get nodes` shows a single `Ready` node (your machine).
 - Ensure below CLI tools are available on your terminal (requires `~/rd/bin` on your path).
-- **When exercises start**: follow [setup](./setup/README.md) to create and select your workshop namespace.
 
 ### CLI Tools
 
@@ -46,9 +45,9 @@ Just make sure to check the [setup guide](./setup/README.md) section 4.
 
 #### Bash completion
 
-Using the CLI tool kubectl, becomes much easier, if you have bash completion.
+Using the CLI tool kubectl becomes much easier with bash completion.
 
-Run this command in your active terminal, or add it to your `~/.bash_profile`
+Run this in your active terminal, or add it to your `~/.bash_profile`
 ```bash
 source <(kubectl completion bash)
 ```
@@ -125,7 +124,7 @@ git checkout -t origin/solutions
 ## Essential kubectl
 
 ```bash
-# What's in my namespace?
+# What's in my current namespace?
 kubectl get all
 kubectl get pods -o wide
 kubectl get <type>/<name> -o yaml        # full object; -o wide for a table
@@ -191,5 +190,3 @@ Plus the [docs](https://kubernetes.io/docs), and an LLM makes a strong Kubernete
 2. Bring the whole `edu-multi-component` system up and add a second backend behind the
    same Ingress on a different host.
 3. Explore the cluster with **k9s** instead of raw `kubectl` for some of the exercises.
-4. Tear everything down with a single `kubectl delete namespace workshop` and confirm
-   it's all gone with `kubectl get all -A | grep workshop`.

@@ -67,40 +67,7 @@ If `get nodes` shows a `Ready` node, you're in business.
 > Rancher Desktop's context is called `rancher-desktop`. If you have several
 > clusters, switch with `kubectl config use-context <name>`.
 
-## 3. Create your namespace
-
-A **namespace** is a labelled fence around a group of resources. Working in your own
-namespace keeps your nginx Pod from colliding with the person next to you, and lets
-you delete everything in one shot at the end.
-
-```bash
-kubectl create namespace workshop
-kubectl get namespaces
-```
-
-## 4. Set the namespace on your context (do this — it saves pain later)
-
-By default `kubectl` talks to the `default` namespace, so every command would need
-`-n workshop`. Instead, pin your namespace onto the **current context** once:
-
-```bash
-kubectl config set-context --current --namespace=workshop
-```
-
-Now `kubectl get pods` automatically means `kubectl get pods -n workshop`. Verify:
-
-```bash
-kubectl config view --minify | grep namespace:
-# namespace: workshop
-```
-
-> **Why make a point of this:** later in the workshop commands sometimes show an
-> explicit `-n demo` / `-n pods`. Once you understand that `-n` just overrides the
-> namespace for one command — and that your context already has a default — those
-> flags stop being confusing. `-A` (or `--all-namespaces`) shows resources across
-> *every* namespace, which is handy when you "lose" something.
-
-## 5. Confirm storage and ingress are present
+## 3. Confirm storage and ingress are present
 
 Module 3 (persistence) needs a default StorageClass; module 4 (exposing) needs an
 ingress controller. Rancher Desktop ships both:
@@ -115,11 +82,3 @@ kubectl get pods -n kube-system | grep traefik
 
 If `local-path` isn't marked `(default)`, module 3 tells you how to name it
 explicitly. If you don't see Traefik (e.g. you're on kind), module 4 has a note.
-
-## Teardown (after the workshop)
-
-Deleting your namespace removes everything you created inside it (be careful what you delete):
-
-```bash
-kubectl delete namespace workshop
-```
