@@ -69,6 +69,7 @@ kubectl get pods --watch
 In another, delete one:
 
 ```bash
+# Delete all Pods where the label app is demo
 kubectl delete pod -l app=demo
 ```
 

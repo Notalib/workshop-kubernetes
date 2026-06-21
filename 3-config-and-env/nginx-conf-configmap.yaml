@@ -6,8 +6,8 @@ kind: ConfigMap
 metadata:
   name: demo-config
 data:
-  greeting: "hello from a ConfigMap"
-  default.conf: |-
+  greeting: "hello from a ConfigMap" # First key is "greeting" with a simple string value.
+  default.conf: |- # second key is "default.conf" with the contents of a file as value.
     server {
       listen 80;
       server_name _;

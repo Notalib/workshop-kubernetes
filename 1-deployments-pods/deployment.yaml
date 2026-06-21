@@ -3,21 +3,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo
+  name: demo # The name or ID this Deployment will be known as, e.g. `kubectl get deploy/demo`.
   labels:
-    app: demo
+    app: demo # Optional: Just here by convention, to allow `get deploy --label app=demo` queries.
 spec:
-  replicas: 2
+  replicas: 3 # This Deployment wants 3 similar Pods running at all times.
   selector:
     matchLabels:
-      app: demo          # selects the Pods this Deployment owns
-  template:
+      app: demo # Must match label in template.
+  template: # Each Pod is created from this template.
     metadata:
       labels:
-        app: demo        # must match the selector above
+        app: demo # Must match selector label.
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.31   # pinned tag, never :latest
+        - name: nginx # One container inside the Pod, also called nginx.
+          image: nginx:1.31.2 # The exact "repo/container-image:tag" to use for this Pod.
           ports:
             - containerPort: 80
