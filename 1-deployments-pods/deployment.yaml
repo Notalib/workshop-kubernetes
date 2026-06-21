@@ -6,14 +6,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo
-  labels:
-    app: demo
+  name: demo # The name or ID this Deployment will be known as. E.g. `kubectl get deploy/demo`.
 spec:
-  # TODO: how many identical Pods should run? integer please ;)
-  replicas: REPLACE_ME
+  replicas: # TODO: how many identical Pods should run? integer please :)
   # The Deployment finds the Pods it owns (created by Kubernetes) by matching the selector labels.
-  # They MUST match .spec.template.metadata.labels below.
+  # They MUST match the `template.metadata.labels` below.
   selector:
     matchLabels:
       app: demo

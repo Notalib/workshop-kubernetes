@@ -5,7 +5,7 @@ kind: Ingress
 metadata:
   name: demo
 spec:
-  ingressClassName: # TODO: which ingress controller should handle this? (traefik on Rancher Desktop)
+  ingressClassName: # TODO: which ingress controller should handle this? (Rancher Desktop uses "traefik").
   rules:
     - host: localhost
       http:
@@ -16,4 +16,4 @@ spec:
               service:
                 name: # TODO: name + port of the Service to route to (see service.yaml)
                 port:
-                  number: 80
+                  number: # TODO: Which port does the Service expose?
