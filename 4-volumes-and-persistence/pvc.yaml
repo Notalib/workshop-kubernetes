@@ -4,10 +4,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: demo-data
+  name: keeper-data
 spec:
   accessModes:
-    # NOTE: This volume only needs to be mounted & written to by ONE node at a time.
+    # NOTE: This volume can be mounted & written to by ONE node at a time.
     #       Possible access modes: ReadWriteOnce / ReadOnlyMany / ReadWriteMany
     - ReadWriteOnce
   resources:

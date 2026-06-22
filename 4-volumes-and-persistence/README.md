@@ -36,15 +36,16 @@ kubectl get pvc
 > With `local-path`, the PVC may stay `Pending` until a Pod actually uses it
 > (`WaitForFirstConsumer`). That's expected — it binds in the next step.
 
-Now run a Pod that mounts the PVC and writes a file. Open
-[`pod-pvc.yaml`](./pod-pvc.yaml), fill in the `claimName` TODO, and apply:
+Now create a Deployment that mounts the PVC and writes a file. Open
+[`deploy-keeper.yaml`](./deploy-keeper.yaml), fill in the `claimName` TODO, and apply:
 
 ```bash
-kubectl apply -f pod-pvc.yaml
-kubectl exec -it pod/keeper -- sh -c 'echo "written at $(date)" >> /data/log.txt; cat /data/log.txt'
+kubectl apply -f deploy-keeper.yaml
+kubectl exec -it deploy/keeper -- sh -c 'tail -f /data/out.txt'
 kubectl get pvc
 # The PVC should now be "Bound" to a real piece of storage (PV)
-kubectl get pv
+kubectl get pv -o yaml
+# Above cmd should help you see the actual path of the storage.
 ```
 
 ---
@@ -52,9 +53,9 @@ kubectl get pv
 ## TASK 2: Prove persistence — kill the Pod, keep the data
 
 ```bash
-kubectl delete pod/keeper
-kubectl apply -f pod-pvc.yaml
-kubectl exec -it pod/keeper -- cat /data/log.txt
+kubectl delete pod -l app=keeper
+# Kubernetes should create a fresh Pod within a few seconds.
+kubectl exec -it deploy/keeper -- cat /data/out.txt
 ```
 
 Your line from before is **still there** — the data lives on the PV, not in the Pod.
@@ -63,8 +64,8 @@ Append again and you'll see history accumulate across Pod lifetimes.
 Now delete the claim and watch the data go:
 
 ```bash
-kubectl delete pod/keeper
-kubectl delete pvc/demo-data
+kubectl delete deploy/keeper
+kubectl delete pvc/keeper-data
 # This releases the PV; with Delete reclaim-policy, storage is freed when unclaimed.
 ```
 
@@ -103,7 +104,7 @@ The data is gone — `emptyDir` starts empty every time the Pod is (re)created.
 ## Stuck?
 
 - Field help: `kubectl explain pvc.spec` and `kubectl explain pod.spec.volumes`.
-- PVC stuck `Pending`? `kubectl describe pvc/demo-data` (read the Events) and check
+- PVC stuck `Pending`? `kubectl describe pvc/keeper-data` (read the Events) and check
   `kubectl get storageclass` — see the multiple-defaults note above.
 - Pod stuck `ContainerCreating`? It's usually the volume — `kubectl describe pod/keeper`.
 - Docs: <https://kubernetes.io/docs/concepts/storage/persistent-volumes/>
