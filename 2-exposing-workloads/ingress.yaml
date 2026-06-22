@@ -1,9 +1,8 @@
-# SOLUTION — completed Ingress routing demo.localhost -> the `demo` Service (TASK 4).
-# Rancher Desktop / k3d use "traefik"; on kind with ingress-nginx use "nginx".
+# SOLUTION — completed Ingress routing localhost -> the `web-app` Service (TASK 4).
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: demo
+  name: web-app
 spec:
   ingressClassName: traefik
   rules:

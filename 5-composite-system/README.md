@@ -10,7 +10,14 @@ now running on Kubernetes. This pulls together everything from modules 1–4:
 - a **PVC** so the database survives restarts,
 - an **Ingress** so you can reach the app from your browser.
 
-Work in your `workshop` namespace.
+Continue work in your `default` namespace. Or create a new one and switch to it, it's up to you.
+
+```bash
+# Create a new namespace
+kubectl create namespace complex-app
+# Set it as default for commands without -n flag
+kubectl config set-context --current --namespace=complex-app
+```
 
 ```
   Request → Ingress (localhost) → Service (backend) → Spring Boot Pod

@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: demo
+  name: web-service
 spec:
   selector:
-    app: demo          # matches the Pods labelled app=demo
+    app: web-pod       # matches the Pods with label `app=web-pod`
   ports:
     - port: 80         # port the Service exposes
       targetPort: 80   # port on the Pod/container

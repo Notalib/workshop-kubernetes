@@ -1,0 +1,21 @@
+# Finished deployment for use with the exercises
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-pod
+  template:
+    metadata:
+      labels:
+        app: web-pod
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:1.31.2
+          resources: {}
+          ports:
+            - containerPort: 80

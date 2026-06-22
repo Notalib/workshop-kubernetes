@@ -1,9 +1,4 @@
-# Setup — get a cluster and a namespace
-
-Do this **once** before the exercises. The goal: a working local cluster, `kubectl`
-pointed at it, and your own namespace set as the default so you don't have to type
-`-n <namespace>` on every command.
-
+# Setup — a working local Kubernetes cluster
 
 ## 1. Get a local cluster
 Here you have a choice of Rancher Desktop, https://k3d.io/ and https://kind.sigs.k8s.io/

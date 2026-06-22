@@ -1,11 +1,8 @@
-# 2 — Configuration & Environment
+# 3 — Configuration & Environment
 
 In module 1, custom HTML you wrote inside a Pod vanished on the next rollout. The fix:
 keep config and content **outside** the image and inject it at runtime. That's what
 ConfigMaps, Secrets, and environment variables are for.
-
-Work in your `workshop` namespace. Start from the Deployment you built in module 1
-(`demo`, running nginx).
 
 > **ConfigMap** — non-secret key/value config (files or strings).
 > **Secret** — same idea, base64-encoded, for credentials (base64 is *encoding*, not
@@ -15,56 +12,73 @@ Work in your `workshop` namespace. Start from the Deployment you built in module
 
 ---
 
-## TASK 1: Serve custom HTML from a ConfigMap (the right way)
+## TASK 0: Have a working Deployment + Service + Ingress
 
-Create a ConfigMap holding an `index.html`:
+**If have a working service + ingress from previous exercise, skip this step**:
 
 ```bash
-kubectl apply -f html-configmap.yaml
-kubectl describe configmap/demo-html
+# Apply a premade deployment + service + ingress (skip if you completed exercise #2)
+kubectl apply -f app.yaml
 ```
 
-Now mount it into nginx's web root. Open [`deployment.yaml`](./deployment.yaml), fill
-in the `TODO`s under `volumes` and `volumeMounts`, then apply:
+## TASK 1: Serve custom HTML from a ConfigMap (the right way)
+
+Now create a ConfigMap holding an `index.html`:
 
 ```bash
-kubectl apply -f deployment.yaml
-kubectl port-forward deployment/demo 8080:80
+kubectl apply -f configmap-html.yaml
+kubectl describe configmap/html
+```
+
+Now let's mount these into the `web-app`.
+
+Open [`app.yaml`](./app.yaml) and fill in the `TODO`s under `volumes` and `volumeMounts`, then apply it:
+
+```bash
+kubectl apply -f app.yaml
+# Open http://localhost in your browser
+# or from terminal: curl -si localhost
+
+# ALTERNATIVE: if Ingress is not working for you, use port-forward
+kubectl port-forward deployment/web-app 8080:80
 # Open http://localhost:8080 in your browser
+# or from terminal: curl -si localhost:8080
 ```
 
 You should see your custom page. **Now the real test:**
 
 ```bash
-kubectl rollout restart deployment/demo
-kubectl port-forward deployment/demo 8080:80
+kubectl rollout restart deployment/web-app
 ```
 
+**WARNING:** You may have to type Ctrl/Cmd + Shift + R to get fresh un-cached results.
+
 The content **survives the rollout** — because it lives in the ConfigMap, not the
-Pod's ephemeral filesystem. Edit `html-configmap.yaml`, re-`apply`, and restart to
+Pod's ephemeral filesystem. Edit `configmap-html.yaml`, re-`apply`, and restart to
 publish a change.
 
 ---
 
 ## TASK 2: Mount a single file with `subPath`
 
-Mounting a ConfigMap at a directory **replaces the whole directory**. Often you want
-to drop in just *one* file (e.g. nginx's `default.conf`) and leave the rest alone.
-That's what `subPath` does.
+Mounting a ConfigMap at a directory **replaces the whole directory**.
+
+Often you want to drop in just *one* file (e.g. nginx's `default.conf`) and leave the rest alone. That's what `subPath` does.
 
 ```bash
-kubectl apply -f nginx-conf-configmap.yaml
+kubectl apply -f configmap-nginx-config.yaml
 ```
 
-In [`deployment.yaml`](./deployment.yaml) there's a second, commented-out
-`volumeMount` for the nginx config that uses `subPath`. Enable it, apply, and confirm
-nginx now returns the custom response:
+In [`app.yaml`](./app.yaml) there's a second, commented-out
+`volumeMount` for the nginx config that uses `subPath`. Un-comment it, re-`apply`, and confirm
+that nginx now returns the custom response:
 
 ```bash
-kubectl port-forward deployment/demo 8080:80
-curl http://localhost:8080/anything
+curl -si http://localhost/anything
 # Should give the "Dead-end" 404 result, from the config.
 ```
+
+**WARNING:** You may have to type Ctrl/Cmd + Shift + R to get fresh un-cached results.
 
 **Experiment:** remove the `subPath:` line, re-apply, and restart. nginx breaks — why?
 (Hint: without `subPath`, the mount replaces all of `/etc/nginx/conf.d/`, including
@@ -74,8 +88,7 @@ files nginx expects to be there. `subPath` mounts only the single file.)
 
 ## TASK 3: Environment variables, set directly
 
-The simplest config: key/value `env` entries on the container. Add this to the nginx
-container in [`deployment.yaml`](./deployment.yaml):
+The simplest config: key/value `env` entries on the container. Add this to the nginx-container in [`app.yaml`](./app.yaml):
 
 ```yaml
           env:
@@ -86,7 +99,7 @@ container in [`deployment.yaml`](./deployment.yaml):
 Apply, then read it back from inside the Pod:
 
 ```bash
-kubectl exec -it deployment/demo -- printenv GREETING
+kubectl exec -it deployment/web-app -- printenv GREETING
 ```
 
 ---
@@ -94,7 +107,7 @@ kubectl exec -it deployment/demo -- printenv GREETING
 ## TASK 4: Environment variables from a ConfigMap
 
 Hard-coding values on the Deployment doesn't scale. Pull them from the ConfigMap
-instead. The `nginx-conf-configmap.yaml` you applied has some plain key/value data;
+instead. The `configmap-nginx-config.yaml` you applied has some plain key/value data;
 reference one as an env var:
 
 ```yaml
@@ -115,10 +128,10 @@ Apply and verify with `printenv` again. To import *all* keys at once, look up
 
 - Field help: `kubectl explain deployment.spec.template.spec.volumes` and
   `kubectl explain deployment.spec.template.spec.containers.volumeMounts`.
-- See what actually got mounted: `kubectl exec deployment/demo -- ls /etc/nginx/conf.d`
-  and `kubectl exec deployment/demo -- cat /usr/share/nginx/html/index.html`.
-- Check your keys match: `kubectl get configmap/demo-config -o yaml`.
-- nginx won't start after removing `subPath`? `kubectl describe pod -l app=demo` and
+- See what actually got mounted: `kubectl exec deployment/web-app -- ls /etc/nginx/conf.d`
+  and `kubectl exec deployment/web-app -- cat /usr/share/nginx/html/index.html`.
+- Check your keys match: `kubectl get configmap/nginx-config -o yaml`.
+- nginx won't start after removing `subPath`? `kubectl describe pod -l app=web-pod` and
   read the Events — that's the lesson.
 - Docs: <https://kubernetes.io/docs/concepts/configuration/configmap/> and
   <https://kubernetes.io/docs/concepts/configuration/secret/>
@@ -128,14 +141,14 @@ Apply and verify with `printenv` again. To import *all* keys at once, look up
 1. Add a secret
 
 ```bash
-kubectl create secret generic demo-secret --from-literal=api-key=sh-its-a-secret
-kubectl get secret/demo-secret -o yaml
+kubectl create secret generic web-secret --from-literal=API_KEY=shhhh-its-a-secret
+kubectl get secret/web-secret -o yaml
 ```
 
 Look at the value — it's base64. Decode it:
 
 ```bash
-kubectl get secret/demo-secret -o jsonpath='{.data.api-key}' | base64 --decode; echo
+kubectl get secret/web-secret -o jsonpath='{.data.API_KEY}' | base64 --decode; echo
 ```
 
 > ⚠️ **base64 is encoding, not encryption.** Anyone who can read the Secret can read

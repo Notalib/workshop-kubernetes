@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: demo-html
+  name: html
 data:
   index.html: |-
     <!doctype html>

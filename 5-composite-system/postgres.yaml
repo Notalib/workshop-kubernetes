@@ -4,8 +4,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: database
-  labels:
-    app: database
 spec:
   replicas: 1
   selector:
