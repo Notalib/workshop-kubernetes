@@ -5,8 +5,7 @@ Real traffic reaches workloads through two stable objects: a **Service** (stable
 identity *inside* the cluster) and an **Ingress** (the door *into* the cluster from
 outside).
 
-Work in your `workshop` namespace. You need the `demo` nginx Deployment running — if
-you tore it down, recreate it: `kubectl create deployment demo --image=nginx`.
+You need the `demo` nginx Deployment running — if you tore it down, recreate it: `kubectl create deployment demo --image=nginx`.
 
 > **Service** — one stable DNS name + IP for a moving set of Pods. Pods are
 > short-lived and their IPs churn; the Service name doesn't. It finds its Pods by
@@ -72,7 +71,7 @@ kubectl exec -it pod/net-debug -- sh
 ```
 
 `http://demo` resolved because the tester Pod is in the same namespace. The fully
-qualified name is `demo.workshop.svc.cluster.local` — try that form too. Notice you
+qualified name is `demo.default.svc.cluster.local` — try that form too. Notice you
 never had to know a Pod IP.
 
 > **How does the Service find its Pods?** By label selector. Check:
@@ -169,7 +168,7 @@ curl http://localhost -H 'Host: localhost'
    `traefik/whoami` and route `whoami.localhost` to it). One ingress controller, many
    apps.
 3. The full internal DNS name is `<service>.<namespace>.svc.cluster.local`. From a
-   Pod in *another* namespace, can you reach `demo.workshop`? Why is the namespace
+   Pod in *another* namespace, can you reach `demo.default.svc`? Why is the namespace
    part needed there but not in TASK 1?
 
    Hint: check `/etc/resolv.conf` inside container
