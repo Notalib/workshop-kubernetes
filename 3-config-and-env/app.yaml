@@ -48,32 +48,31 @@ spec:
                   name: demo-config
                   key: greeting
 ---
+# Filled out Service and Ingress included, to make testing easier.
 apiVersion: v1
 kind: Service
 metadata:
   name: web-service
 spec:
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
   selector:
     app: web-pod
+  ports:
+    - port: 80
+      targetPort: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: web-app
 spec:
-  ingressClassName: traefik
   rules:
-  - host: localhost
-    http:
-      paths:
-      - backend:
-          service:
-            name: web-service
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
+    - host: localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
