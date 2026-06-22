@@ -64,7 +64,7 @@ kubectl run test --rm -it --restart=Never --image=busybox -- wget -qO- http://de
 
 Alternatively start a sleeping debugger:
 ```bash
-kubectl run net-debug --image=nicolaka/netshoot --restart=Never --rm -- sleep infinity
+kubectl run net-debug --image=nicolaka/netshoot --restart=Never -- sleep infinity
 kubectl exec -it pod/net-debug -- sh
 
 # Then inside the container, try nslookup demo
