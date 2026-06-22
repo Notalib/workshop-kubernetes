@@ -1,4 +1,4 @@
-# 2 — Configuration & Environment
+# 3 — Configuration & Environment
 
 In module 1, custom HTML you wrote inside a Pod vanished on the next rollout. The fix:
 keep config and content **outside** the image and inject it at runtime. That's what
