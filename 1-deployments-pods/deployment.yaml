@@ -13,7 +13,7 @@ spec:
   # They MUST match the `template.metadata.labels` below.
   selector:
     matchLabels:
-      app: demo
+      app: demo-pod
 
   # The Pod template: a blueprint every replica is created from.
   template:
@@ -22,7 +22,7 @@ spec:
         app: # TODO: which label? (must match the selector above)
     spec:
       containers:
-        - name: nginx
+        - name: nginx-container
           image: # TODO: which image? Pin a tag, don't use :latest. Check https://hub.docker.com
           ports:
             - containerPort: 80

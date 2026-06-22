@@ -5,8 +5,6 @@ the workshop. It mirrors Workshop #1's Docker CLI demo — but where Docker ran 
 container on one machine, Kubernetes keeps your workloads **running, scaled, and
 reachable** without you babysitting them.
 
-Run everything in your `workshop` namespace (see [../setup](../setup/README.md)).
-
 ---
 
 # 0. Are we running?

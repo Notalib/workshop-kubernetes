@@ -3,8 +3,7 @@
 Your first workload. You'll create an nginx Deployment, poke it, break it, and watch
 Kubernetes heal it. Then you'll write the same thing as a YAML manifest.
 
-Work in your `workshop` namespace (see [../setup](../setup/README.md)). Have the docs
-handy: <https://kubernetes.io/docs>.
+We are working in the `default` namespace (so we avoid having to set `-n <namespace>` flag on all our commands). Have the docs handy: <https://kubernetes.io/docs>.
 
 > **Pod** = the smallest deployable unit: one or more containers that share an IP and
 > run as one unit.
@@ -66,10 +65,10 @@ Watch your Pods in one terminal:
 kubectl get pods --watch
 ```
 
-In another, delete one:
+In another, delete the pod:
 
 ```bash
-kubectl delete pod -l app=demo
+kubectl delete pod -l app=demo-pod
 ```
 
 **What happened?** The Deployment's desired state is "1 replica", so the controller
@@ -86,7 +85,7 @@ kubectl port-forward deployment/demo 8080:80
 ```
 
 `8080:80` means **local 8080 → container 80**. Ctrl+C to stop. This is a debugging
-shortcut, not how real traffic reaches the cluster (that's module 4).
+shortcut, not how real traffic reaches the cluster (that's module 2).
 
 ---
 

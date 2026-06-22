@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: demo-config
+  name: nginx-config
 data:
   greeting: "hello from a ConfigMap"
   default.conf: |-

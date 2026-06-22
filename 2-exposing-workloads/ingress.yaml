@@ -1,11 +1,11 @@
-# An Ingress routing localhost -> the `demo` Service (TASK 4). Fill in the TODOs.
+# An Ingress routing localhost -> the `web-app` Service (TASK 4). Fill in the TODOs.
 # On Rancher Desktop / k3d the class is "traefik"; on kind with ingress-nginx use "nginx".
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: demo
+  name: web-app
 spec:
-  ingressClassName: # TODO: which ingress controller should handle this? (Rancher Desktop uses "traefik").
+  ingressClassName: # TODO: which ingress controller should handle this? (Rancher Desktop / k3d uses "traefik"; Docker Desktop / kind uses "nginx".).
   rules:
     - host: localhost
       http:
@@ -16,4 +16,4 @@ spec:
               service:
                 name: # TODO: name + port of the Service to route to (see service.yaml)
                 port:
-                  number: # TODO: Which port does the Service expose?
+                  number: # TODO: Which port does the Service (not the Pod) expose?

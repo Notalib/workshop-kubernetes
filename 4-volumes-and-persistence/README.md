@@ -3,8 +3,6 @@
 ConfigMaps inject config *in*. This module is about **storage**: scratch space shared
 between containers in a Pod, and durable storage that outlives the Pod entirely.
 
-Work in your `workshop` namespace.
-
 > The persistence chain, top to bottom:
 > **Pod** → **PersistentVolumeClaim (PVC)** "give me 1Gi of storage" → bound to a
 > **PersistentVolume (PV)** "an actual piece of storage" → provisioned by a
@@ -19,7 +17,7 @@ First, confirm you have a default StorageClass to provision from:
 
 ```bash
 kubectl get storageclass
-# local-path  ...  (default)     ← Rancher Desktop ships this
+# local-path  ...  (default)    ←    Rancher Desktop ships this
 ```
 
 > **Seeing more than one `(default)`?** If `get storageclass` lists two defaults
