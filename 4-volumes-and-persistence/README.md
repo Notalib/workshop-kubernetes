@@ -1,4 +1,4 @@
-# 3 — Volumes & Persistence
+# 4 — Volumes & Persistence
 
 ConfigMaps inject config *in*. This module is about **storage**: scratch space shared
 between containers in a Pod, and durable storage that outlives the Pod entirely.
