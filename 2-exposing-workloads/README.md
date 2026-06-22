@@ -1,4 +1,4 @@
-# 4 — Exposing Workloads
+# 2 — Exposing Workloads
 
 `port-forward` was fine for debugging, but it's a one-off tunnel from your laptop.
 Real traffic reaches workloads through two stable objects: a **Service** (stable
