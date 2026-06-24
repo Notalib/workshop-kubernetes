@@ -115,7 +115,7 @@ reference one as an env var:
             - name: GREETING
               valueFrom:
                 configMapKeyRef:
-                  name: demo-config
+                  name: nginx-config
                   key: greeting
 ```
 
