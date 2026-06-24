@@ -45,7 +45,7 @@ spec:
             - name: GREETING
               valueFrom:
                 configMapKeyRef:
-                  name: demo-config
+                  name: nginx-config
                   key: greeting
 ---
 # Filled out Service and Ingress included, to make testing easier.
