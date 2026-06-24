@@ -68,7 +68,7 @@ kubectl get pods --watch
 In another, delete the pod:
 
 ```bash
-kubectl delete pod -l app=demo-pod
+kubectl delete pod -l app=demo
 ```
 
 **What happened?** The Deployment's desired state is "1 replica", so the controller
