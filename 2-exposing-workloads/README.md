@@ -151,7 +151,7 @@ kubectl describe ingress/web-app
 1. Now delete the imperative objects from earlier tasks & recreate them from YAML.
 
 ```bash
-kubectl delete service/web-app service/web-app-np ingress/web-app
+kubectl delete service/web-service service/web-app-np ingress/web-app
 ```
 
 2. Fill in the `TODO`s in [`service.yaml`](./service.yaml) and [`ingress.yaml`](./ingress.yaml) and then apply them to the Kubernetes cluster.
@@ -168,7 +168,7 @@ curl http://localhost -H 'Host: localhost'
 
 - Field help: `kubectl explain service.spec` and `kubectl explain ingress.spec.rules`.
 - Service returns nothing / has no endpoints? Its `selector` doesn't match your Pod
-  labels: compare `kubectl describe service/web-app` with `kubectl get pods --show-labels`.
+  labels: compare `kubectl describe service/web-service` with `kubectl get pods --show-labels`.
 - Ingress 404s? `kubectl describe ingress/web-app` — check the host and `ingressClassName`,
   and that Traefik is running (`kubectl get pods -n kube-system | grep traefik`).
 - Docs: <https://kubernetes.io/docs/concepts/services-networking/>
@@ -176,12 +176,13 @@ curl http://localhost -H 'Host: localhost'
 ## BONUS
 
 1. Scale `web-app` to 3 replicas and `curl http://localhost` repeatedly while
-   running `kubectl get endpoints web-app -w`. The Service load-balances across Pods.
+   running `kubectl get endpoints web-service -w`. The Service load-balances across Pods.
+
 2. Add a second path/host to the Ingress pointing at a *different* Service (deploy
-   `traefik/whoami` and route `whoami.localhost` to it). One ingress controller, many
-   apps.
+   `traefik/whoami` and route `whoami.localhost` to it). One ingress controller, many apps.
+
 3. The full internal DNS name is `<service>.<namespace>.svc.cluster.local`. From a
-   Pod in *another* namespace, can you reach `web-app.default.svc`? Why is the namespace
+   Pod in *another* namespace, can you reach `web-service.default.svc`? Why is the namespace
    part needed there but not in TASK 1? See `setup/namespaces.md` to understand how to create one and create objects inside it.
 
    Hint: Check the `/etc/resolv.conf` file inside a container.
